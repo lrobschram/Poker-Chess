@@ -1,4 +1,5 @@
 from enum import Enum, auto
+from MovementRules import MOVEMENT_RULES
 
 class PieceType(Enum):
     KING = auto()
@@ -49,7 +50,7 @@ PIECE_STATS = {
         "attack": 3,
         "movement": 3,
         "range": 1,
-        "movement_rule": "straight_or_side"
+        "movement_rule": "wolf"
     },
 
     PieceType.CATAPULT: {
@@ -125,4 +126,8 @@ class Piece:
             return self.type.name[0].upper()
         else:
             return self.type.name[0].lower()
+    
+    def get_raw_moves(self, board):
+        move_func = MOVEMENT_RULES[self.movement_rule]
+        return move_func(self, board)
         

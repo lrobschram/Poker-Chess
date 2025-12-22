@@ -30,3 +30,6 @@ class Board:
                 line.append(cell.piece_initial() if cell else ".")
             lines.append(" ".join(line))
         return "\n".join(lines)
+    
+    def get_legal_moves(self, piece):
+        return NotImplementedError
