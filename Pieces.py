@@ -119,3 +119,10 @@ class Piece:
 
     def take_damage(self, dmg):
         self.health -= dmg
+
+    def piece_initial(self):
+        if (self.owner == "White"):
+            return self.type.name[0].upper()
+        else:
+            return self.type.name[0].lower()
+        

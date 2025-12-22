@@ -22,17 +22,11 @@ class Board:
         self.grid[end[1]][end[0]] = piece
         self.grid[start[1]][start[0]] = None
 
-    def print_board(self):
-        board = "  ABCDEFGH"
-        for i in range(self.rows):
-            rowi = "\n" + str(i) + " "
-            for j in range(self.cols):
-                if (self.grid[i][j] == None):
-                    rowi += "-"
-                else:
-                    rowi += self.grid[i][j].piece_initial() # TODO make a method to print piece initial
-            board += rowi
-        print(board)
-
-testBoard = Board()
-testBoard.print_board()
+    def __str__(self):
+        lines = []
+        for row in self.grid:
+            line = []
+            for cell in row:
+                line.append(cell.piece_initial() if cell else ".")
+            lines.append(" ".join(line))
+        return "\n".join(lines)
