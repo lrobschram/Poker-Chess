@@ -129,5 +129,5 @@ class Piece:
     
     def get_raw_moves(self, board):
         move_func = MOVEMENT_RULES[self.movement_rule]
-        return move_func(self, board)
+        return move_func(board, self)
         
