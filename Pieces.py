@@ -13,84 +13,104 @@ class PieceType(Enum):
     JESTER = auto()
     QUEEN = auto()
 PIECE_STATS = {
-    PieceType.KING: {
-        "health": 5,
-        "attack": 2,
-        "movement": 1,
-        "range": 1,
-        "movement_rule": "king"
-    },
-
+    # Highcard
     PieceType.WARRIOR: {
         "health": 1,
         "attack": 1,
         "movement": 1,
         "range": 1,
-        "movement_rule": "forward_only"
+        "movement_rule": "forward_only",
+        "promotes_to": PieceType.JESTER
     },
 
+    # Pair
     PieceType.ARCHER: {
         "health": 1,
         "attack": 1,
         "movement": 1,
-        "range": 2,
-        "movement_rule": "forward_only"
+        "range": 2,  # +1 range
+        "movement_rule": "forward_only",
+        "promotes_to": PieceType.QUEEN
     },
 
+    # Two-Pair
     PieceType.KNIGHT: {
         "health": 3,
         "attack": 1,
         "movement": 1,
         "range": 1,
-        "movement_rule": "knight"
+        "movement_rule": "knight",
+        "promotes_to": None
     },
 
-    PieceType.DIREWOLF: {
+    # 3 of a Kind
+    PieceType.WIZARD: {
         "health": 2,
-        "attack": 3,
-        "movement": 3,
-        "range": 1,
-        "movement_rule": "wolf"
+        "attack": 2,
+        "movement": 1,
+        "range": 2,  # +1 range
+        "movement_rule": "king",
+        "promotes_to": None
     },
 
+    # Straight
     PieceType.CATAPULT: {
         "health": 3,
         "attack": 2,
         "movement": 1,
-        "range": 3,
-        "movement_rule": "any"
+        "range": 3,  # +2 range
+        "movement_rule": "king",
+        "promotes_to": None
     },
 
+    # Flush
     PieceType.JUGGERNAUT: {
         "health": 5,
         "attack": 2,
         "movement": 2,
         "range": 1,
-        "movement_rule": "any"
+        "movement_rule": "any",
+        "promotes_to": None
     },
 
-    PieceType.WIZARD: {
+    # Full House
+    PieceType.DIREWOLF: {
         "health": 2,
         "attack": 3,
-        "movement": 1,
-        "range": 4,
-        "movement_rule": "any"
+        "movement": 4,
+        "range": 1,
+        "movement_rule": "wolf",
+        "promotes_to": None
     },
 
+    # Four of a Kind
     PieceType.JESTER: {
         "health": 4,
         "attack": 4,
         "movement": 2,
         "range": 1,
-        "movement_rule": "any"
+        "movement_rule": "any",
+        "promotes_to": None
     },
 
+    # Straight Flush
     PieceType.QUEEN: {
         "health": 5,
         "attack": 5,
         "movement": 2,
-        "range": 2,
-        "movement_rule": "any"
+        "range": 2,  # Range+1
+        "movement_rule": "any",
+        "promotes_to": None
+    },
+
+    # King (for completeness)
+    PieceType.KING: {
+        "health": 5,
+        "attack": 2,
+        "movement": 1,
+        "range": 1,
+        "movement_rule": "king",
+        "promotes_to": None
     },
 }
 
@@ -111,14 +131,6 @@ class Piece:
         self.max_health = stats["health"]
         self.health = stats["health"]
         self.attack = stats["attack"]
-        self.movement = stats["movement"]
-        self.range = stats["range"]
-        self.movement_rule = stats["movement_rule"]
-
-    def is_alive(self):
-        return self.health > 0
-
-    def take_damage(self, dmg):
         self.health -= dmg
 
     def piece_initial(self):
