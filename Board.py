@@ -3,24 +3,24 @@ class Board:
     def __init__(self, rows=8, cols=8):
         self.rows = rows
         self.cols = cols
-        self.grid = [[None for _ in range(rows)] for _ in range(cols)]
+        self.grid = [[None for _ in range(cols)] for _ in range(rows)]
 
     def in_bounds(self, pos):
         x, y = pos
-        return 0 <= x < self.rows and 0 <= y < self.cols
+        return 0 <= x < self.cols and 0 <= y < self.rows
 
     def get_piece(self, pos):
         x, y = pos
-        return self.grid[x][y]
+        return self.grid[y][x]
 
     def place_piece(self, piece, pos):
         x, y = pos
-        self.grid[x][y] = piece
+        self.grid[y][x] = piece
 
     def move_piece(self, start, end):
         piece = self.get_piece(start)
-        self.grid[end[0]][end[1]] = piece
-        self.grid[start[0]][start[1]] = None
+        self.grid[end[1]][end[0]] = piece
+        self.grid[start[1]][start[0]] = None
 
     def __str__(self):
         lines = []
@@ -32,4 +32,6 @@ class Board:
         return "\n".join(lines)
     
     def get_legal_moves(self, piece):
+
+        
         return NotImplementedError

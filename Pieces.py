@@ -12,6 +12,7 @@ class PieceType(Enum):
     WIZARD = auto()
     JESTER = auto()
     QUEEN = auto()
+    
 PIECE_STATS = {
     # Highcard
     PieceType.WARRIOR: {
@@ -131,6 +132,10 @@ class Piece:
         self.max_health = stats["health"]
         self.health = stats["health"]
         self.attack = stats["attack"]
+<<<<<<< HEAD
+=======
+      
+>>>>>>> main
 
     def piece_initial(self):
         if (self.owner == "White"):
@@ -140,5 +145,5 @@ class Piece:
     
     def get_raw_moves(self, board):
         move_func = MOVEMENT_RULES[self.movement_rule]
-        return move_func(board, self)
+        return move_func(self, board)
         
