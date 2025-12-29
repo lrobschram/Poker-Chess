@@ -2,16 +2,21 @@ from HandEvaluator import evaluate_hand, HandRank
 from Deck import Deck
 
 def refill_deck(player):
+
+    # create a new deck object and remove the current cards in hand
     player.deck = Deck()
     player.deck.remove_cards(player.hand.cards)
 
+
 def refill_to_seven(player):
+
     if (player.hand.size() < 7):
         amt_needed = 7 - player.hand.size()
 
         try:
             new_cards = player.deck.draw(amt_needed)
 
+        # refill the deck if there are not enough cards to draw
         except ValueError as e:
             refill_deck(player)
             new_cards = player.deck.draw(amt_needed)
@@ -46,17 +51,23 @@ def pick_five_cards(hand):
 
     return indices
 
+"""
+    Walks through the Poker Phase for the inputed player
 
+    (1) draws hand of 7 cards
+    (2) allows up to two discards 
+    (3) can play a poker hand with 5 of the 7 cards or skip
+    
+    Returns the piece created from the poker hand or None if skipped
+"""
 def PokerPhase(player):
 
-    # draw cards up to 7 
+    # draw cards up to 7 + reshuffle deck if ran out of cards 
     refill_to_seven(player)
     
-    # reshuffle deck if ran out of cards (TODO what if draw illegal poker hands? eg. 5 of a kind)
-
     # allow for 2 discards (or skip)
 
-    # select cards to play poker hand (or skip?)
+    # select cards to play poker hand 
     chosen_indices = pick_five_cards(player.hand)
     
     # evaluate the hand
