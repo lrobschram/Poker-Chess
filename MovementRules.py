@@ -17,6 +17,7 @@ KNIGHT_OFFSETS = [
 
 
 #helper method that returns legal moves based on the offset of the pieces
+@staticmethod
 def offset_moves(board, piece, offsets):
     moves = []
 
@@ -33,6 +34,7 @@ def offset_moves(board, piece, offsets):
 
     return moves
 
+@staticmethod
 #helper method for ray moves that returns how many squares you can move in that direction
 def ray_moves(board, piece, directions, max_distance):
     legal = []
@@ -53,22 +55,28 @@ def ray_moves(board, piece, directions, max_distance):
 
     return legal
 
+
 #method that returns movement in any direction 
+@staticmethod
 def any_dir_moves(board, piece):
     # max_distance comes from piece.movement
     return ray_moves(board, piece, ANY_ONE_DIRECTION_OFFSET, piece.movement)
 
 # warrior, archer
+@staticmethod
 def forward_moves(board, piece):
     return offset_moves(board, piece, FORWARD_OFFSETS[piece.owner])
 #king
+@staticmethod
 def king_moves(board, piece):
     return offset_moves(board, piece, ANY_ONE_DIRECTION_OFFSET)
 #knight
+@staticmethod
 def knight_moves(board, piece):
     return offset_moves(board, piece, KNIGHT_OFFSETS)
 
 #dire wolf
+@staticmethod
 def wolf_moves(board, piece):
 
     legal = []
