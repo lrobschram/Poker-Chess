@@ -7,7 +7,7 @@ class Hand:
     def __init__(self, cards: List[Card]):
         self.cards = cards
 
-    def discard(self, indices: List[int], deck: Deck):
+    def discard(self, indices: List[int]):
         """
         Discard cards at the given indices and draw replacements.
         indices: list of positions (0–4)
@@ -27,10 +27,6 @@ class Hand:
         # Remove cards in descending order to avoid index shifting
         for i in sorted(indices, reverse=True):
             self.cards.pop(i)
-
-        # Draw replacements
-        new_cards = deck.draw(len(indices))
-        self.cards.extend(new_cards)
     
     def print_hand(self):
         for i, card in enumerate(self.cards):

@@ -1,9 +1,21 @@
 from HandEvaluator import evaluate_hand, HandRank
+from Deck import Deck
+
+def refill_deck(player):
+    player.deck = Deck()
+    player.deck.remove_cards(player.hand.cards)
 
 def refill_to_seven(player):
     if (player.hand.size() < 7):
-        amt_needed = 7 - player.hand.hand_size()
-        new_cards = player.deck.draw(amt_needed)
+        amt_needed = 7 - player.hand.size()
+
+        try:
+            new_cards = player.deck.draw(amt_needed)
+
+        except ValueError as e:
+            refill_deck(player)
+            new_cards = player.deck.draw(amt_needed)
+
         player.hand.add_cards(new_cards)
 
 

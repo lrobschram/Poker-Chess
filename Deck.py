@@ -24,3 +24,17 @@ class Deck:
 
     def remaining(self):
         return len(self.cards)
+    
+    def print_deck(self):
+        for i, card in enumerate(self.cards):
+            print(f"{i}: {card}")
+    
+    def remove_card(self, card):
+        if card in self.cards:
+            self.cards.remove(card)
+        
+    def remove_cards(self, cards):
+        for card in cards:
+            self.remove_card(card)
+    
+
