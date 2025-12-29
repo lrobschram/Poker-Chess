@@ -30,12 +30,16 @@ def pick_five_cards(hand):
 
     while(not valid_input):
         hand.print_hand()
-        raw = input("Enter at most 5 card indices to play (or Enter to skip): ").strip() 
+        raw = input("Enter at most 5 card indices (or Enter to skip): ").strip() 
 
         if raw == "":
             return None
 
-        indices = list(map(int, raw.split()))
+        try:
+            indices = list(map(int, raw.split()))
+        except ValueError:
+            print("\nPlease input values 0-6 with spaces in between! Try again")
+            continue
 
         # Check if input has at most 5 cards selected
         if (len(indices) > 5):
@@ -51,6 +55,39 @@ def pick_five_cards(hand):
 
     return indices
 
+
+def ask_to_discard(player):
+
+    print("\nPick up to 5 cards to discard or skip!")
+    chosen_indices = pick_five_cards(player.hand)
+
+    # returns false when player wants to skip the discards
+    if (chosen_indices != None):
+        player.hand.discard(chosen_indices)
+        refill_to_seven(player)
+        return True
+    else:
+        return False 
+
+
+def ask_to_play(player):
+
+    # select cards to play poker hand 
+    print("\nPick up to 5 cards to play or skip poker phase!")
+    chosen_indices = pick_five_cards(player.hand)
+    
+    # evaluate the hand
+    if (chosen_indices != None):
+        hand_rank = evaluate_hand([player.hand.cards[i] for i in chosen_indices])
+    else:
+        return None # return None if skipped play
+
+    # discard played cards
+    player.hand.discard(chosen_indices)
+
+    return hand_rank
+
+
 """
     Walks through the Poker Phase for the inputed player
 
@@ -58,26 +95,20 @@ def pick_five_cards(hand):
     (2) allows up to two discards 
     (3) can play a poker hand with 5 of the 7 cards or skip
     
-    Returns the piece created from the poker hand or None if skipped
+    Returns Hand Rank object of poker hand played or None if skipped
 """
 def PokerPhase(player):
 
     # draw cards up to 7 + reshuffle deck if ran out of cards 
     refill_to_seven(player)
     
-    # allow for 2 discards (or skip)
+    # allow for up to 2 discards 
+    ask_again = ask_to_discard(player)
+    if (ask_again):
+        ask_to_discard(player)
 
-    # select cards to play poker hand 
-    chosen_indices = pick_five_cards(player.hand)
+    # play a poker hand or skip
+    hand_rank = ask_to_play(player)
     
-    # evaluate the hand
-    if (chosen_indices != None):
-        hand_rank = evaluate_hand([player.hand.cards[i] for i in chosen_indices])
-    else:
-        return None # return no piece if skipped play
-
-    # discard played cards
-    player.hand.discard(chosen_indices, player.deck)
-
-    # return the piece earned 
+    # return the piece earned (or None if skipped)
     return hand_rank

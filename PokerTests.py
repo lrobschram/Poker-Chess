@@ -73,7 +73,7 @@ def test_refilling_deck():
 
 
 def main():
-    test_refilling_deck()
+    test_poker_phase()
 
 if __name__ == "__main__":
     main()
