@@ -3,7 +3,7 @@ class Board:
     def __init__(self, rows=8, cols=8):
         self.rows = rows
         self.cols = cols
-        self.grid = [[None for _ in range(cols)] for _ in range(rows)]
+        self.grid = [[None for _ in range(rows)] for _ in range(cols)]
 
     def in_bounds(self, pos):
         x, y = pos
@@ -11,16 +11,16 @@ class Board:
 
     def get_piece(self, pos):
         x, y = pos
-        return self.grid[y][x]
+        return self.grid[x][y]
 
     def place_piece(self, piece, pos):
         x, y = pos
-        self.grid[y][x] = piece
+        self.grid[x][y] = piece
 
     def move_piece(self, start, end):
         piece = self.get_piece(start)
-        self.grid[end[1]][end[0]] = piece
-        self.grid[start[1]][start[0]] = None
+        self.grid[end[0]][end[1]] = piece
+        self.grid[start[0]][start[1]] = None
 
     def __str__(self):
         lines = []
