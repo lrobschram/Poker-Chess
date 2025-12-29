@@ -116,34 +116,44 @@ PIECE_STATS = {
 }
 
 class Piece:
-
+    #initializes all fields of a piece   
     def __init__(self, piece_type, owner):
         self.type = piece_type
         self.owner = owner
-
-        self.row = None
-        self.col = None
-
+        self.row = None 
+        self.col = None 
         self.apply_stats()
 
+    #applys all stats to the piece
     def apply_stats(self):
-        
+
         stats = PIECE_STATS[self.type]
         self.max_health = stats["health"]
         self.health = stats["health"]
         self.attack = stats["attack"]
-<<<<<<< HEAD
-=======
-      
->>>>>>> main
-
+        self.movement = stats["movement"]
+        self.range = stats["range"]
+        self.movement_rule = stats["movement_rule"]
+        self.promotes_to = stats["promotes_to"]
+        
+    #Sets first initial of white pieces to uppercase
     def piece_initial(self):
         if (self.owner == "White"):
             return self.type.name[0].upper()
         else:
             return self.type.name[0].lower()
-    
+        
+    #gets all moves that are possible
     def get_raw_moves(self, board):
         move_func = MOVEMENT_RULES[self.movement_rule]
         return move_func(self, board)
+  
+  #subtracts the damage done by the attack, returns true if the piece is dead, false otherwise
+    def take_damage(self, dmg):
+        self.health -= dmg
+        if self.health <= 0:
+            self.health = 0
+            return True
+        return False
+
         

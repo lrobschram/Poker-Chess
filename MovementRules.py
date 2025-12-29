@@ -101,3 +101,5 @@ MOVEMENT_RULES = {
     "forward_only": forward_moves,
     "any": any_dir_moves,  
 }
+
+
