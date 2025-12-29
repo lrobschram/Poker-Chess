@@ -131,7 +131,6 @@ class Piece:
         self.max_health = stats["health"]
         self.health = stats["health"]
         self.attack = stats["attack"]
-        self.health -= dmg
 
     def piece_initial(self):
         if (self.owner == "White"):
