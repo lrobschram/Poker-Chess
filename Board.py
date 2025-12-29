@@ -23,12 +23,16 @@ class Board:
         self.grid[start[0]][start[1]] = None
 
     def __str__(self):
-        lines = []
-        for row in self.grid:
-            line = []
-            for cell in row:
-                line.append(cell.piece_initial() if cell else ".")
-            lines.append(" ".join(line))
+        col_labels = "  " + " ".join(chr(ord("A") + c) for c in range(self.cols))
+        lines = [col_labels]
+
+        for r in range(self.rows):
+            row_cells = []
+            for c in range(self.cols):
+                cell = self.grid[r][c]
+                row_cells.append(cell.piece_initial() if cell else ".")
+            lines.append(f"{r} " + " ".join(row_cells))
+
         return "\n".join(lines)
     
     def get_legal_moves(self, piece):
