@@ -1,12 +1,10 @@
-from Card import Card, Suit, Rank
+from Card import Card
 from typing import List
 from Deck import Deck
 
 class Hand:
 
     def __init__(self, cards: List[Card]):
-        if len(cards) != 5:
-            raise ValueError("A hand must start with exactly 5 cards")
         self.cards = cards
 
     def discard(self, indices: List[int], deck: Deck):
@@ -40,3 +38,9 @@ class Hand:
 
     def get_cards(self):
         return self.cards
+    
+    def size(self):
+        return len(self.cards)
+    
+    def add_cards(self, cards):
+        self.cards.extend(cards)

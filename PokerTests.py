@@ -1,6 +1,8 @@
 from Deck import Deck
 from Hand import Hand
 from HandEvaluator import evaluate_hand, HandRank
+from Player import Player
+from PokerPhase import PokerPhase
 
 def prompt_discard(hand, deck):
     """
@@ -26,18 +28,26 @@ def prompt_discard(hand, deck):
 
 def main():
 
-    deck = Deck()
-    hand = Hand(deck.draw(5))
+    # deck = Deck()
+    # hand = Hand(deck.draw(5))
 
-    print("Initial hand:")
-    hand.print_hand()
-    print(str(evaluate_hand(hand.cards)))
+    # print("Initial hand:")
+    # hand.print_hand()
+    # print(str(evaluate_hand(hand.cards)))
 
-    prompt_discard(hand, deck)
+    # prompt_discard(hand, deck)
     
-    print("\nAfter discard:")
-    hand.print_hand()
-    print(str(evaluate_hand(hand.cards)))
+    # print("\nAfter discard:")
+    # hand.print_hand()
+    # print(str(evaluate_hand(hand.cards)))
+
+    player = Player()
+    hand_rank = PokerPhase(player)
+
+    if (hand_rank == None):
+        print("SKIPPED PLAY")
+    else:
+        print(hand_rank.name)
 
 if __name__ == "__main__":
     main()
