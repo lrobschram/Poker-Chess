@@ -152,8 +152,9 @@ class Piece:
     def take_damage(self, dmg):
         self.health -= dmg
         if self.health <= 0:
-            self.health = 0
-            return True
-        return False
-
+            self.health = 0  # Clamp to 0 to avoid negative health
+        return self.is_piece_dead()
+    
+    def is_piece_dead(self):
+        return self.health <= 0
         
