@@ -38,17 +38,21 @@ def pick_five_cards(hand):
         try:
             indices = list(map(int, raw.split()))
         except ValueError:
-            print("\nPlease input values 0-6 with spaces in between! Try again")
+            print("\nPlease input values 0-6 with spaces in between — try again")
             continue
 
         # Check if input has at most 5 cards selected
         if (len(indices) > 5):
-            print("\nCannot select more than 5 cards! Try again")
+            print("\nCannot select more than 5 cards — try again")
             continue
 
         # Check if input has valid indices
         if any(i < 0 or i >= hand.size() for i in indices):
             print("\nOne or more indices are out of range — try again")
+            continue
+
+        if len(indices) != len(set(indices)):
+            print("\nCannot have two of the same indices — try again")
             continue
 
         valid_input = True
