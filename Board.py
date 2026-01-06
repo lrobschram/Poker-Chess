@@ -32,7 +32,7 @@ class Board:
         piece.col = None
 
 
-    def setup_initial_game(self):
+    def setup_initial_game(self, white_player, black_player):
         from Pieces import Piece, PieceType
     #place white king, 2 Warriors and 1 Archer
         K = Piece(PieceType.KING, "White")
@@ -45,6 +45,12 @@ class Board:
         self.place_piece(W1, (6, 3))
         W2 = Piece(PieceType.WARRIOR, "White")
         self.place_piece(W2, (6,4))
+
+        white_player.my_pieces.append(K)
+        white_player.my_pieces.append(A)
+        white_player.my_pieces.append(W1)
+        white_player.my_pieces.append(W2)
+
     #place piece black king, 2 Warriors and Archer
     
         k = Piece(PieceType.KING, "Black")
@@ -57,6 +63,11 @@ class Board:
         self.place_piece(w1, (1, 3))
         w2 = Piece(PieceType.WARRIOR, "Black")
         self.place_piece(w2, (1, 4))
+
+        black_player.my_pieces.append(k)
+        black_player.my_pieces.append(a)
+        black_player.my_pieces.append(w1)
+        black_player.my_pieces.append(w2)
 
     def attack(self, attacker_pos, target_pos):
         attacker = self.get_piece(attacker_pos)

@@ -91,3 +91,4 @@ def PlacementPhase(player, hand_rank, board):
         print(f"Piece created: {piece.type.name}")
         r, c = ask_loc(player, board)
         board.place_piece(piece, (r,c))
+        player.my_pieces.append(piece)

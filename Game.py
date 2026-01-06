@@ -15,7 +15,7 @@ class Game:
             "Black": Player("Black")
         }
         self.current_player_color = "White"
-        self.board.setup_initial_game()
+        self.board.setup_initial_game(self.players["White"], self.players["Black"])
         
     def get_current_player(self):
         return self.players[self.current_player_color]
@@ -45,6 +45,8 @@ def main():
         curr_player = game.get_current_player()
         curr_player.start_turn()
         print(f"Current player: {curr_player.color}")
+        print("\nMy current pieces:")
+        curr_player.print_pieces()
 
         # Poker Phase
         hand_rank = PokerPhase(curr_player)
