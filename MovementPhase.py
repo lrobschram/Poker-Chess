@@ -31,8 +31,9 @@ def rc_to_pos(rc_tuple):
 def print_all_pos_moves(piece, moves, board):
     all_moves = f"All possible moves for {piece.type.name}: "
     for move in moves:
-        if (board.get_piece(move) == None):
-            all_moves += rc_to_pos(move)
+        # if (board.get_piece(move) == None):
+        #     all_moves += rc_to_pos(move)
+        all_moves += rc_to_pos(move)
 
     print(all_moves)
 
@@ -61,7 +62,10 @@ def ask_to_move(color, board, pieces_moved):
         curr_c = letters.index(curr_loc[0])
 
         piece = board.get_piece( (curr_r, curr_c) )
-        if (piece == None) or (piece.owner != color): 
+        if (piece == None):
+            print("There is no piece there - try again")
+            continue
+        if (piece.owner != color): 
             print("The piece must be owned by you - try again")
             continue
         if piece in pieces_moved:
@@ -73,33 +77,34 @@ def ask_to_move(color, board, pieces_moved):
         display_pos_move_board(piece, board, all_moves)
         print_all_pos_moves(piece, all_moves, board)
 
-        # TODO ask for new loc
-        move_to_raw = input("Enter where to move to or Enter to pick a different piece (ie. A7): ").strip().upper()
+        while True:
+            # ask for new loc
+            move_to_raw = input("Enter where to move to or Enter to pick a different piece (ie. A7): ").strip().upper()
 
-        if (move_to_raw == ""):
-            continue
+            if (move_to_raw == ""):
+                break
 
-        if (not valid_input(move_to_raw, letters)):
-            print("Please enter valid spaces on the board - try again")
-            continue
+            if (not valid_input(move_to_raw, letters)):
+                print("Please enter valid spaces on the board - try again")
+                continue
 
-        move = (int(move_to_raw[1]), letters.index(move_to_raw[0]))
+            move = (int(move_to_raw[1]), letters.index(move_to_raw[0]))
 
-        # check inputted new loc is in bounds and legal for the piece
-        if (not board.in_bounds(move)):
-            print("New position must be in bounds - try again")
-            continue
+            # check inputted new loc is in bounds and legal for the piece
+            if (not board.in_bounds(move)):
+                print("New position must be in bounds - try again")
+                continue
 
-        if move not in all_moves:
-            print(f"{piece.type.name} is not allowed to move there")
-            continue
+            if move not in all_moves:
+                print(f"{piece.type.name} is not allowed to move there")
+                continue
 
-        # make sure new spot is empty
-        if (board.get_piece(move) != None) :
-            print("A piece is already there - try again")
-            continue
+            # make sure new spot is empty
+            if (board.get_piece(move) != None) :
+                print("A piece is already there - try again")
+                continue
 
-        return (curr_r, curr_c), move
+            return (curr_r, curr_c), move
     
 
 """

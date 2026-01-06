@@ -25,10 +25,10 @@ def offset_moves(board, piece, offsets):
         r = piece.row + dr
         c = piece.col + dc
 
-        if not board.in_bounds((c, r)):
+        if not board.in_bounds((r, c)):
             continue
 
-        target = board.get_piece((c, r))
+        target = board.get_piece((r, c))
         if target is None: 
             moves.append((r, c))
 
@@ -44,10 +44,10 @@ def ray_moves(board, piece, directions, max_distance):
             r = piece.row + dr * step
             c = piece.col + dc * step
 
-            if not board.in_bounds((c, r)):
+            if not board.in_bounds((r, c)):
                 break
 
-            target = board.get_piece((c, r))
+            target = board.get_piece((r, c))
             if target is None:
                 legal.append((r, c))
             else:
