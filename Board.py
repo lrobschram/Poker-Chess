@@ -23,10 +23,13 @@ class Board:
         piece = self.get_piece(start)
         self.grid[end[0]][end[1]] = piece
         self.grid[start[0]][start[1]] = None
+        piece.row = end[0]
+        piece.col = end[1]
 
-        #TODO
     def remove_piece(self, piece):
-        return NotImplementedError
+        self.grid[piece.row][piece.col] = None
+        piece.row = None
+        piece.col = None
 
 
     def setup_initial_game(self):
@@ -53,7 +56,7 @@ class Board:
         w1 = Piece(PieceType.WARRIOR, "Black")
         self.place_piece(w1, (1, 3))
         w2 = Piece(PieceType.WARRIOR, "Black")
-        self.place_piece(W2, (1, 4))
+        self.place_piece(w2, (1, 4))
 
     def attack(self, attacker_pos, target_pos):
         attacker = self.get_piece(attacker_pos)
