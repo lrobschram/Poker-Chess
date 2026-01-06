@@ -146,7 +146,7 @@ class Piece:
     #gets all moves that are possible
     def get_raw_moves(self, board):
         move_func = MOVEMENT_RULES[self.movement_rule]
-        return move_func(self, board)
+        return move_func(board, self)
   
   #subtracts the damage done by the attack, returns true if the piece is dead, false otherwise
     def take_damage(self, dmg):

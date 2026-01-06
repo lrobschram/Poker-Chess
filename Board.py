@@ -15,6 +15,8 @@ class Board:
 
     def place_piece(self, piece, pos):
         x, y = pos
+        piece.row = x
+        piece.col = y
         self.grid[x][y] = piece
 
     def move_piece(self, start, end):
