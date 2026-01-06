@@ -101,6 +101,13 @@ class Board:
         return king.is_piece_dead()
         
     
+    def copy_for_display(self):
+        new_board = Board(self.rows, self.cols)
+
+        # copy the grid layout (but not the piece objects)
+        new_board.grid = [row[:] for row in self.grid]
+
+        return new_board
 
 
 
@@ -112,10 +119,18 @@ class Board:
             row_cells = []
             for c in range(self.cols):
                 cell = self.grid[r][c]
-                row_cells.append(cell.piece_initial() if cell else ".")
+
+                if cell is None:
+                    row_cells.append(".")
+                elif cell == "★":
+                    row_cells.append("★")
+                else:
+                    row_cells.append(cell.piece_initial())
+
             lines.append(f"{r} " + " ".join(row_cells))
 
         return "\n".join(lines)
+
     
     def get_legal_moves(self, piece):
 

@@ -1,20 +1,40 @@
 import string
+from Board import Board
 
 
-def valid_input(parts, letters):
-    if len(parts) != 2:
+def valid_input(input, letters):
+
+    if len(input) != 2:
         return False
-
-    for loc in parts:
-        if len(loc) != 2:
-            return False
-        if loc[0] not in letters:
-            return False
-        if not loc[1].isdigit():
-            return False
+    if input[0] not in letters:
+        return False
+    if not input[1].isdigit():
+        return False
 
     return True
 
+
+def display_pos_move_board(piece, board, pos_moves):
+    dis_board = board.copy_for_display()
+
+    for (r, c) in pos_moves:
+        # only mark empty squares so we don't overwrite pieces
+        if dis_board.grid[r][c] is None:
+            dis_board.grid[r][c] = "★"
+
+    print(dis_board)
+
+def rc_to_pos(rc_tuple):
+    letters = string.ascii_uppercase
+    return f"{letters[rc_tuple[1]]}{rc_tuple[0]} "
+
+def print_all_pos_moves(piece, moves, board):
+    all_moves = f"All possible moves for {piece.type.name}: "
+    for move in moves:
+        if (board.get_piece(move) == None):
+            all_moves += rc_to_pos(move)
+
+    print(all_moves)
 
 
 def ask_to_move(color, board, pieces_moved):
@@ -23,20 +43,18 @@ def ask_to_move(color, board, pieces_moved):
 
     while True:
 
-        # grab user input and test if valid
-        raw = input("Enter curr piece loc and place to move it to or Enter to skip (ie. A7 B6): ").strip().upper()
+        # grab user piece input and test if valid
+        to_move_raw = input("Enter a piece's loc to move or Enter to skip (ie. A7): ").strip().upper()
 
-        if (raw == ""):
+        if (to_move_raw == ""):
             print("Skipped remaining movements!")
             return None, None
 
-        parts = raw.split()
-
-        if (not valid_input(parts, letters)):
+        if (not valid_input(to_move_raw, letters)):
             print("Please enter valid spaces on the board - try again")
             continue
 
-        curr_loc, new_loc = parts
+        curr_loc = to_move_raw
 
         # check user has a piece at inputted loc
         curr_r = int(curr_loc[1])
@@ -52,10 +70,20 @@ def ask_to_move(color, board, pieces_moved):
 
         # generate all legal moves for the piece
         all_moves = piece.get_raw_moves(board)
-        print(f"All possible moves for {piece.type.name}:")
-        print(all_moves)
+        display_pos_move_board(piece, board, all_moves)
+        print_all_pos_moves(piece, all_moves, board)
 
-        move = (int(new_loc[1]), letters.index(new_loc[0]))
+        # TODO ask for new loc
+        move_to_raw = input("Enter where to move to or Enter to pick a different piece (ie. A7): ").strip().upper()
+
+        if (move_to_raw == ""):
+            continue
+
+        if (not valid_input(move_to_raw, letters)):
+            print("Please enter valid spaces on the board - try again")
+            continue
+
+        move = (int(move_to_raw[1]), letters.index(move_to_raw[0]))
 
         # check inputted new loc is in bounds and legal for the piece
         if (not board.in_bounds(move)):
@@ -72,11 +100,7 @@ def ask_to_move(color, board, pieces_moved):
             continue
 
         return (curr_r, curr_c), move
-
-
-def move_piece():
-    return None
-
+    
 
 """
     Walks through the Movement Phase for the inputed player
