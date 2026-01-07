@@ -172,3 +172,7 @@ class Piece:
     def is_piece_dead(self):
         return self.health <= 0
         
+    def promote(self):
+        if (self.promotes_to != None):
+            self.type = self.promotes_to
+            self.apply_stats()

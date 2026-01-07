@@ -141,9 +141,20 @@ class MovementScreen:
             else:
                 if (game.board.get_piece((row, col)) == None):
                     if ((row, col) in self.pos_moves):
+
                         game.board.move_piece(self.curr_piece,(row, col))
-                        self.pieces_moved.append(game.board.get_piece((row, col)))
-                        game.get_current_player().use_move()
+
+                        new_piece = game.board.get_piece((row, col))
+                        curr_player = game.get_current_player()
+
+                        # promote piece if made it to the end of the board
+                        if (curr_player.color == "White") and (row == 0):
+                            new_piece.promote()
+                        elif (curr_player.color == "Black") and (row == 7):
+                            new_piece.promote()
+
+                        self.pieces_moved.append(new_piece)
+                        curr_player.use_move()
 
                 self.selected = False
                 self.pos_moves = []
