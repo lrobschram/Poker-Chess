@@ -7,7 +7,10 @@ from PlacementScreen import PlacementScreen
 from AttackScreen import AttackScreen
 
 pygame.init()
-screen = pygame.display.set_mode((560, 560))
+
+BOARD_W = 8 * 70  # 560
+PANEL_W = 200
+screen = pygame.display.set_mode((BOARD_W + PANEL_W, BOARD_W))
 pygame.display.set_caption("Board Game")
 
 game = Game()
@@ -35,6 +38,7 @@ while running:
             # TODO add some "onExit" and "onEnter" methods
             curr_phase = new_phase
             curr_screen = screens[curr_phase]
+            curr_screen.on_enter(screen, game)
 
     curr_screen.draw(screen, game)
     pygame.display.flip()
