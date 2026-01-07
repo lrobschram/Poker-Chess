@@ -37,10 +37,23 @@ def draw_pieces(screen, board_state, font, x0=0, y0=0):
             screen.blit(text, (x0 + c*TILE + 22, y0 + r*TILE + 15))
 
 
-def draw_highlights(screen, moves, x0=0, y0=0):
+# draws the highlights as a border around the given tiles
+def draw_borders(screen, moves, x0=0, y0=0):
     for r, c in moves:
         rect = pygame.Rect(x0 + c*TILE, y0 + r*TILE, TILE, TILE)
         pygame.draw.rect(screen, (255, 200, 0), rect, 4)
+
+# draws the highlights as little squares in the given tiles
+def draw_highlights(screen, moves, x0=0, y0=0):
+    HIGHLIGHT_SIZE = TILE // 3  # adjust size here
+
+    for r, c in moves:
+        inner_x = x0 + c*TILE + (TILE - HIGHLIGHT_SIZE) // 2
+        inner_y = y0 + r*TILE + (TILE - HIGHLIGHT_SIZE) // 2
+
+        inner_rect = pygame.Rect(inner_x, inner_y, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE)
+        pygame.draw.rect(screen, (255, 200, 0), inner_rect)
+
 
 def draw_error(screen, pos, x0=0, y0=0):
     rect = pygame.Rect(x0 + pos[1]*TILE, y0 + pos[0]*TILE, TILE, TILE)
