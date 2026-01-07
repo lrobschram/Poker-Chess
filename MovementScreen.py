@@ -31,6 +31,8 @@ def draw_pieces(screen, board_state, font, x0=0, y0=0):
             piece = board_state[r][c]
             if piece is None:
                 continue
+            
+            # TODO create custon black/white pieces
             text = font.render(piece.piece_initial(), True, (0, 0, 0))
             screen.blit(text, (x0 + c*TILE + 22, y0 + r*TILE + 15))
 
@@ -53,7 +55,7 @@ def draw_panel(screen, font, game, x0, w, h):
     lines = [
         f"Phase: MOVEMENT",
         f"Player: {player.color}",
-        f"Moves left: {player.movements_left}",  # adjust to your field/method
+        f"Moves left: {player.movements_left}", 
     ]
 
     y = 20
@@ -83,6 +85,16 @@ class MovementScreen:
             bg_color=(200, 200, 200)
             )
 
+    """
+        Handles the different events that can happen in the Movement phase
+        (1) When player selects one of their pieces, 
+            the board highlights legal spaces to move to
+        (2) When player selects one of these highlighted places, move the piece there
+        (3) Player only gets 3 moves or can click the 'Skip' button to move
+            to the attack phase
+        (4) Player can only move their own pieces once and cannot move opponents pieces,
+            both events will cause a red error highlight to appear
+    """
     def handle_event(self, event, game):
 
         if self.skip_button.is_clicked(event):
@@ -95,10 +107,12 @@ class MovementScreen:
                 return Screen.MOVEMENT
             row, col = sq
 
+            # first time clicked, a piece is selected, highlight where it can move
             if not self.selected:
                 piece = game.board.get_piece( (row, col) )
 
                 if piece != None:
+                    # piece must belong to curr player and can only move once a turn
                     if (not piece in self.pieces_moved) and (game.get_current_player().color == piece.owner):
                         self.curr_piece = (row, col)
                         self.pos_moves = piece.get_raw_moves(game.board)
@@ -109,6 +123,8 @@ class MovementScreen:
                         self.error_start_time = pygame.time.get_ticks()
                 else:
                     self.pos_moves = []
+
+            # second time clicked, player chooses one of the highlighted spaces and move piece there
             else:
                 if (game.board.get_piece((row, col)) == None):
                     if ((row, col) in self.pos_moves):
@@ -123,7 +139,14 @@ class MovementScreen:
             return Screen.ATTACK
         return Screen.MOVEMENT
 
+    """
+        Draws the Movement screen
+        Creates an 8x8 tile chess board with the current pieces + highlighted tiles on it
+        Creates a sidebar with information about the phase (curr player, moves left, ect.)
+    """
     def draw(self, screen, game):
+
+        # error highlight only lasts 0.5 seconds
         now = pygame.time.get_ticks()
         if self.error and now - self.error_start_time > self.ERROR_DURATION:
             self.error = False
@@ -144,6 +167,11 @@ class MovementScreen:
         draw_panel(screen, self.hud_font, game, panel_x, panel_w, panel_h)
         self.skip_button.draw(screen)
 
+    """
+        Sets up the Movement phase on entering
+        Resets the amount of moves + clears pieces moved
+    """
     def on_enter(self, screen, game):
+
         game.get_current_player().start_turn()
         self.pieces_moved = []

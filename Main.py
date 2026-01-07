@@ -27,6 +27,8 @@ curr_screen = screens[curr_phase]
 
 running = True
 while running:
+
+    # send screen events from the player
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -34,8 +36,9 @@ while running:
 
         new_phase = curr_screen.handle_event(event, game)
 
+        # change screens when switching to a new phase
         if new_phase != curr_phase:
-            # TODO add some "onExit" and "onEnter" methods
+            # TODO add some "on_exit" and "on_enter" methods
             curr_phase = new_phase
             curr_screen = screens[curr_phase]
             curr_screen.on_enter(screen, game)
