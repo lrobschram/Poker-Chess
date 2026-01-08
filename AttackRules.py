@@ -15,7 +15,11 @@ class AttackRules:
     #checks if defender is in range of attacker
     @staticmethod
     def in_range(attacker, defender):
+
         row_dist = abs(attacker.row - defender.row)
         col_dist = abs(attacker.col - defender.col)
+        if(row_dist == col_dist): return False #on a diagonal
 
         return max(row_dist, col_dist) <= attacker.range
+    
+    #TODO check whether there is a piece blocking the sight (ray)
