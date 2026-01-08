@@ -1,6 +1,6 @@
 FORWARD_OFFSETS = {
-    "White": [(1, 0), (0, -1), (0, 1)],
-    "Black": [(-1, 0), (0, -1), (0, 1)]
+    "White": [(-1, 0), (0, -1), (0, 1)],
+    "Black": [(1, 0), (0, -1), (0, 1)]
 }
 
 ANY_ONE_DIRECTION_OFFSET = [
@@ -25,10 +25,10 @@ def offset_moves(board, piece, offsets):
         r = piece.row + dr
         c = piece.col + dc
 
-        if not board.in_bounds((c, r)):
+        if not board.in_bounds((r, c)):
             continue
 
-        target = board.get_piece((c, r))
+        target = board.get_piece((r, c))
         if target is None: 
             moves.append((r, c))
 
@@ -44,10 +44,10 @@ def ray_moves(board, piece, directions, max_distance):
             r = piece.row + dr * step
             c = piece.col + dc * step
 
-            if not board.in_bounds((c, r)):
+            if not board.in_bounds((r, c)):
                 break
 
-            target = board.get_piece((c, r))
+            target = board.get_piece((r, c))
             if target is None:
                 legal.append((r, c))
             else:
@@ -83,9 +83,9 @@ def wolf_moves(board, piece):
 
     # Determine forward direction based on owner
     if piece.owner == "White":
-        forward_dir = [(1, 0)]   # forward = down the rows
+        forward_dir = [(-1, 0)]   # forward = down the rows
     else:
-        forward_dir = [(-1, 0)]  # forward = up the rows
+        forward_dir = [(1, 0)]  # forward = up the rows
 
     # 4 squares forward
     legal.extend(ray_moves(board, piece, forward_dir, 4))

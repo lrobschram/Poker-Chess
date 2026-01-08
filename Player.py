@@ -12,6 +12,7 @@ class Player:
         self.deck = Deck()
         self.hand = Hand(self.deck.draw(7))
         self.start_turn()
+        self.my_pieces = []
 
     def start_turn(self):
         self.movements_left = self.MAX_MOVES
@@ -32,5 +33,9 @@ class Player:
         if not self.can_attack():
             raise RuntimeError("No attacks left")
         self.attacks_left -= 1
+    
+    def print_pieces(self):
+        for piece in self.my_pieces:
+            print(f"{piece.type.name} at ({piece.row}, {piece.col})")
 
         

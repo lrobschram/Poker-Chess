@@ -115,6 +115,20 @@ PIECE_STATS = {
     },
 }
 
+PIECE_SYMBOLS = {
+    "KING": "K",
+    "KNIGHT": "N",
+    "QUEEN": "Q",
+    "ARCHER": "A",
+    "WARRIOR": "W",
+    "DIREWOLF": "D",
+    "JESTER": "J",
+    "JUGGERNAUT": "G",   
+    "WIZARD": "Z",
+    "CATAPULT": "C",
+}
+
+
 class Piece:
     #initializes all fields of a piece   
     def __init__(self, piece_type, owner):
@@ -139,14 +153,14 @@ class Piece:
     #Sets first initial of white pieces to uppercase
     def piece_initial(self):
         if (self.owner == "White"):
-            return self.type.name[0].upper()
+            return PIECE_SYMBOLS[self.type.name].upper()
         else:
-            return self.type.name[0].lower()
+            return PIECE_SYMBOLS[self.type.name].lower()
         
     #gets all moves that are possible
     def get_raw_moves(self, board):
         move_func = MOVEMENT_RULES[self.movement_rule]
-        return move_func(self, board)
+        return move_func(board, self)
   
   #subtracts the damage done by the attack, returns true if the piece is dead, false otherwise
     def take_damage(self, dmg):
@@ -158,3 +172,7 @@ class Piece:
     def is_piece_dead(self):
         return self.health <= 0
         
+    def promote(self):
+        if (self.promotes_to != None):
+            self.type = self.promotes_to
+            self.apply_stats()

@@ -15,19 +15,24 @@ class Board:
 
     def place_piece(self, piece, pos):
         x, y = pos
+        piece.row = x
+        piece.col = y
         self.grid[x][y] = piece
 
     def move_piece(self, start, end):
         piece = self.get_piece(start)
         self.grid[end[0]][end[1]] = piece
         self.grid[start[0]][start[1]] = None
+        piece.row = end[0]
+        piece.col = end[1]
 
-        #TODO
     def remove_piece(self, piece):
-        return NotImplementedError
+        self.grid[piece.row][piece.col] = None
+        piece.row = None
+        piece.col = None
 
 
-    def setup_initial_game(self):
+    def setup_initial_game(self, white_player, black_player):
         from Pieces import Piece, PieceType
     #place white king, 2 Warriors and 1 Archer
         K = Piece(PieceType.KING, "White")
@@ -40,6 +45,12 @@ class Board:
         self.place_piece(W1, (6, 3))
         W2 = Piece(PieceType.WARRIOR, "White")
         self.place_piece(W2, (6,4))
+
+        white_player.my_pieces.append(K)
+        white_player.my_pieces.append(A)
+        white_player.my_pieces.append(W1)
+        white_player.my_pieces.append(W2)
+
     #place piece black king, 2 Warriors and Archer
     
         k = Piece(PieceType.KING, "Black")
@@ -51,7 +62,12 @@ class Board:
         w1 = Piece(PieceType.WARRIOR, "Black")
         self.place_piece(w1, (1, 3))
         w2 = Piece(PieceType.WARRIOR, "Black")
-        self.place_piece(W2, (1, 4))
+        self.place_piece(w2, (1, 4))
+
+        black_player.my_pieces.append(k)
+        black_player.my_pieces.append(a)
+        black_player.my_pieces.append(w1)
+        black_player.my_pieces.append(w2)
 
     def attack(self, attacker_pos, target_pos):
         attacker = self.get_piece(attacker_pos)
@@ -85,6 +101,13 @@ class Board:
         return king.is_piece_dead()
         
     
+    def copy_for_display(self):
+        new_board = Board(self.rows, self.cols)
+
+        # copy the grid layout (but not the piece objects)
+        new_board.grid = [row[:] for row in self.grid]
+
+        return new_board
 
 
 
@@ -96,10 +119,18 @@ class Board:
             row_cells = []
             for c in range(self.cols):
                 cell = self.grid[r][c]
-                row_cells.append(cell.piece_initial() if cell else ".")
+
+                if cell is None:
+                    row_cells.append(".")
+                elif cell == "★":
+                    row_cells.append("★")
+                else:
+                    row_cells.append(cell.piece_initial())
+
             lines.append(f"{r} " + " ".join(row_cells))
 
         return "\n".join(lines)
+
     
     def get_legal_moves(self, piece):
 
