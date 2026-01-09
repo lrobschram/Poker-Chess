@@ -1,47 +1,12 @@
 import pygame
 from Screens import Screen
-from ui import Button
+from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_borders, draw_pieces, get_square_from_mouse
 from AttackRules import get_attack_targets
 from Pieces import PieceType
 
-ROWS, COLS = 8, 8
-TILE = 70
-
 # -------------------- Utility Functions --------------------
 
-def draw_board(screen, x0=0, y0=0):
-    for r in range(ROWS):
-        for c in range(COLS):
-            color = (180, 180, 180) if (r + c) % 2 == 0 else (120, 120, 120)
-            rect = pygame.Rect(x0 + c*TILE, y0 + r*TILE, TILE, TILE)
-            pygame.draw.rect(screen, color, rect)
-
-def get_square_from_mouse(pos, x0=0, y0=0):
-    x, y = pos
-    x -= x0
-    y -= y0
-    if x < 0 or y < 0:
-        return None
-    col = x // TILE
-    row = y // TILE
-    if row < 0 or row >= ROWS or col < 0 or col >= COLS:
-        return None
-    return row, col
-
-def draw_pieces(screen, board_state, font, x0=0, y0=0):
-    for r in range(ROWS):
-        for c in range(COLS):
-            piece = board_state[r][c]
-            if piece is None:
-                continue
-            text = font.render(piece.piece_initial(), True, (0, 0, 0))
-            screen.blit(text, (x0 + c*TILE + 22, y0 + r*TILE + 15))
-
-def draw_error(screen, pos, x0=0, y0=0):
-    rect = pygame.Rect(x0 + pos[1]*TILE, y0 + pos[0]*TILE, TILE, TILE)
-    pygame.draw.rect(screen, (255, 0, 0), rect, 4)
-
-def draw_panel(screen, font, game, x0, w, h, phase="ATTACK", attacks_left=0):
+def draw_panel(screen, font, game, x0, w, h, phase="Attack", attacks_left=0):
     pygame.draw.rect(screen, (220, 220, 220), pygame.Rect(x0, 0, w, h))
     player = game.get_current_player()
     lines = [
@@ -74,8 +39,8 @@ class AttackScreen:
         self.ERROR_DURATION = 500  # milliseconds
 
         self.skip_button = Button(
-            rect=(250, 250, 160, 40),
-            text="Skip Phase",
+            rect=(COLS*TILE + 20, 200, 160, 40),
+            text="Skip Attack",
             font=self.hud_font,
             bg_color=(200, 200, 200)
         )
@@ -84,7 +49,7 @@ class AttackScreen:
 
     def handle_event(self, event, game):
         if self.skip_button.is_clicked(event):
-            return Screen.MOVEMENT
+            return Screen.POKER
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             square = get_square_from_mouse(pygame.mouse.get_pos())
@@ -106,7 +71,7 @@ class AttackScreen:
                 self.resolve_attack(game, row, col)
             else:
                 # Invalid attack: deselect attacker and show error
-                self.trigger_error((row, col))
+                # self.trigger_error((row, col))
                 self.selected_attacker = None
                 self.valid_targets = []
             return
@@ -154,15 +119,17 @@ class AttackScreen:
 
         # Green highlight for selected attacker
         if attacker:
-            inner_x = board_x + attacker.col * TILE + (TILE - HIGHLIGHT_SIZE) // 2
-            inner_y = board_y + attacker.row * TILE + (TILE - HIGHLIGHT_SIZE) // 2
-            pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(inner_x, inner_y, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE))
+            # inner_x = board_x + attacker.col * TILE + (TILE - HIGHLIGHT_SIZE) // 2
+            # inner_y = board_y + attacker.row * TILE + (TILE - HIGHLIGHT_SIZE) // 2
+            # pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(inner_x, inner_y, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE))
+            draw_borders(screen, (attacker.row, attacker.col), (0, 100, 255), board_x, board_y)
 
         # Yellow highlights for valid targets
         for r, c in targets:
-            inner_x = board_x + c * TILE + (TILE - HIGHLIGHT_SIZE) // 2
-            inner_y = board_y + r * TILE + (TILE - HIGHLIGHT_SIZE) // 2
-            pygame.draw.rect(screen, (255, 200, 0), pygame.Rect(inner_x, inner_y, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE))
+            # inner_x = board_x + c * TILE + (TILE - HIGHLIGHT_SIZE) // 2
+            # inner_y = board_y + r * TILE + (TILE - HIGHLIGHT_SIZE) // 2
+            # pygame.draw.rect(screen, (255, 200, 0), pygame.Rect(inner_x, inner_y, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE))
+            draw_borders(screen, (r,c), (255, 200, 0), board_x, board_y)
 
         # Red overlay for pieces that already attacked
         for used_piece in self.used_attackers:
@@ -203,6 +170,7 @@ class AttackScreen:
         game.get_current_player().start_turn()
 
     def on_exit(self, screen, game):
+        game.switch_player()
         return None
 
     # -------------------- Helper --------------------

@@ -147,7 +147,7 @@ class PokerScreen:
             if len(self.cards_selected) > 0:
                 self.discard(game, self.cards_displayed)
 
-            return Screen.ATTACK
+            return Screen.PLACEMENT
 
         # toggle card when clicked on
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -171,7 +171,7 @@ class PokerScreen:
 
         hand_rank = self.calc_poker_hand()
         if (hand_rank != None):
-            curr_poker_hand = hand_rank.name
+            curr_poker_hand = hand_rank.name.replace("_", " ").title()
         else:
             curr_poker_hand = "No Cards Selected"
         

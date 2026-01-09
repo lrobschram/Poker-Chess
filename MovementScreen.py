@@ -1,63 +1,6 @@
 import pygame
 from Screens import Screen
-from ui import Button
-
-ROWS, COLS = 8, 8
-TILE = 70
-
-def draw_board(screen, x0=0, y0=0):
-    for r in range(ROWS):
-        for c in range(COLS):
-            color = (180, 180, 180) if (r + c) % 2 == 0 else (120, 120, 120)
-            rect = pygame.Rect(x0 + c*TILE, y0 + r*TILE, TILE, TILE)
-            pygame.draw.rect(screen, color, rect)
-
-def get_square_from_mouse(pos, x0=0, y0=0):
-    x, y = pos
-    x -= x0
-    y -= y0
-    if x < 0 or y < 0:
-        return None
-    col = x // TILE
-    row = y // TILE
-    if row < 0 or row >= ROWS or col < 0 or col >= COLS:
-        return None
-    return row, col
-
-
-def draw_pieces(screen, board_state, font, x0=0, y0=0):
-    for r in range(ROWS):
-        for c in range(COLS):
-            piece = board_state[r][c]
-            if piece is None:
-                continue
-            
-            # TODO create custon black/white pieces
-            text = font.render(piece.piece_initial(), True, (0, 0, 0))
-            screen.blit(text, (x0 + c*TILE + 22, y0 + r*TILE + 15))
-
-
-# draws the highlights as a border around the given tiles
-def draw_borders(screen, moves, x0=0, y0=0):
-    for r, c in moves:
-        rect = pygame.Rect(x0 + c*TILE, y0 + r*TILE, TILE, TILE)
-        pygame.draw.rect(screen, (255, 200, 0), rect, 4)
-
-# draws the highlights as little squares in the given tiles
-def draw_highlights(screen, moves, x0=0, y0=0):
-    HIGHLIGHT_SIZE = TILE // 3  # adjust size here
-
-    for r, c in moves:
-        inner_x = x0 + c*TILE + (TILE - HIGHLIGHT_SIZE) // 2
-        inner_y = y0 + r*TILE + (TILE - HIGHLIGHT_SIZE) // 2
-
-        inner_rect = pygame.Rect(inner_x, inner_y, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE)
-        pygame.draw.rect(screen, (255, 200, 0), inner_rect)
-
-
-def draw_error(screen, pos, x0=0, y0=0):
-    rect = pygame.Rect(x0 + pos[1]*TILE, y0 + pos[0]*TILE, TILE, TILE)
-    pygame.draw.rect(screen, (255, 0, 0), rect, 4)
+from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights, draw_pieces, get_square_from_mouse
 
 
 def draw_panel(screen, font, game, x0, w, h):
@@ -66,7 +9,7 @@ def draw_panel(screen, font, game, x0, w, h):
 
     player = game.get_current_player()
     lines = [
-        f"Phase: MOVEMENT",
+        f"Phase: Movement",
         f"Player: {player.color}",
         f"Moves left: {player.movements_left}", 
     ]
@@ -184,7 +127,16 @@ class MovementScreen:
 
         screen.fill((240, 240, 240))
         draw_board(screen, board_x, board_y)
-        draw_highlights(screen, self.pos_moves, board_x, board_y)
+        draw_highlights(screen, self.pos_moves, (255, 200, 0), board_x, board_y)
+
+        # Red overlay for pieces that already attacked
+        for piece in self.pieces_moved:
+            overlay = pygame.Surface((TILE, TILE), pygame.SRCALPHA)
+            overlay.fill((255, 0, 0, 100))  # semi-transparent red
+            inner_x = board_x + piece.col * TILE
+            inner_y = board_y + piece.row * TILE
+            screen.blit(overlay, (inner_x, inner_y))
+
         if self.error:
             draw_error(screen, self.err_loc, board_x, board_y)
         draw_pieces(screen, game.board.grid, self.font, board_x, board_y)

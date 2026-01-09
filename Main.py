@@ -22,8 +22,10 @@ screens = {
     Screen.ATTACK: AttackScreen(),
 }
 
-curr_phase = Screen.ATTACK
+curr_phase = Screen.POKER
 curr_screen = screens[curr_phase]
+
+curr_screen.on_enter(screen, game)  # initial poker set up
 
 running = True
 while running:

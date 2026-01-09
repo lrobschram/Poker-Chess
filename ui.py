@@ -1,6 +1,64 @@
 import pygame
 from Card import Suit
 
+ROWS, COLS = 8, 8
+TILE = 70
+
+def draw_board(screen, x0=0, y0=0):
+    for r in range(ROWS):
+        for c in range(COLS):
+            color = (180, 180, 180) if (r + c) % 2 == 0 else (120, 120, 120)
+            rect = pygame.Rect(x0 + c*TILE, y0 + r*TILE, TILE, TILE)
+            pygame.draw.rect(screen, color, rect)
+
+def get_square_from_mouse(pos, x0=0, y0=0):
+    x, y = pos
+    x -= x0
+    y -= y0
+    if x < 0 or y < 0:
+        return None
+    col = x // TILE
+    row = y // TILE
+    if row < 0 or row >= ROWS or col < 0 or col >= COLS:
+        return None
+    return row, col
+
+
+def draw_pieces(screen, board_state, font, x0=0, y0=0):
+    for r in range(ROWS):
+        for c in range(COLS):
+            piece = board_state[r][c]
+            if piece is None:
+                continue
+            
+            # TODO create custon black/white pieces
+            text = font.render(piece.piece_initial(), True, (0, 0, 0))
+            screen.blit(text, (x0 + c*TILE + 22, y0 + r*TILE + 15))
+
+
+# draws the highlights as a border around the given tiles
+def draw_borders(screen, pos, color, x0=0, y0=0):
+
+    rect = pygame.Rect(x0 + pos[1]*TILE, y0 + pos[0]*TILE, TILE, TILE)
+    pygame.draw.rect(screen, color, rect, 4)
+
+# draws the highlights as little squares in the given tiles
+def draw_highlights(screen, moves, color, x0=0, y0=0):
+    HIGHLIGHT_SIZE = TILE // 3  # adjust size here
+
+    for r, c in moves:
+        inner_x = x0 + c*TILE + (TILE - HIGHLIGHT_SIZE) // 2
+        inner_y = y0 + r*TILE + (TILE - HIGHLIGHT_SIZE) // 2
+
+        inner_rect = pygame.Rect(inner_x, inner_y, HIGHLIGHT_SIZE, HIGHLIGHT_SIZE)
+        pygame.draw.rect(screen, color, inner_rect)
+
+
+def draw_error(screen, pos, x0=0, y0=0):
+    rect = pygame.Rect(x0 + pos[1]*TILE, y0 + pos[0]*TILE, TILE, TILE)
+    pygame.draw.rect(screen, (255, 0, 0), rect, 4)
+
+
 class Button:
     def __init__(self, rect, text, font, bg_color, text_color=(0,0,0)):
         self.rect = pygame.Rect(rect)
