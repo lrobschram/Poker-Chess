@@ -3,7 +3,7 @@ from enum import Enum, auto
 
 class HandRank(Enum):
     HIGH_CARD = auto()
-    ONE_PAIR = auto()
+    PAIR = auto()
     TWO_PAIR = auto()
     THREE_KIND = auto()
     STRAIGHT = auto()
@@ -45,7 +45,7 @@ def evaluate_hand(cards):
     if counts == [2, 2, 1] or counts == [2, 2]:
         return HandRank.TWO_PAIR
     if counts == [2, 1, 1, 1] or counts == [2, 1] or counts == [2, 1, 1] or counts == [2]:
-        return HandRank.ONE_PAIR
+        return HandRank.PAIR
 
     # --- Only evaluate 5-card structure hands ---
     if n == 5:

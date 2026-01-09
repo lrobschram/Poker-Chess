@@ -27,6 +27,7 @@ class Card_ui:
         self.rect = pygame.Rect(pos[0], pos[1], 80, 120)
         self.card_object = card_object
         self.font = font
+        self.card = card_object
     
     def draw(self, screen):
         mouse_pos = pygame.mouse.get_pos()

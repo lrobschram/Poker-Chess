@@ -4,7 +4,7 @@ import string
 
 HAND_TO_PIECE = {
     HandRank.HIGH_CARD:     PieceType.WARRIOR,
-    HandRank.ONE_PAIR:      PieceType.ARCHER,
+    HandRank.PAIR:      PieceType.ARCHER,
     HandRank.TWO_PAIR:      PieceType.KNIGHT,
     HandRank.THREE_KIND:    PieceType.WIZARD,
     HandRank.STRAIGHT:      PieceType.CATAPULT,

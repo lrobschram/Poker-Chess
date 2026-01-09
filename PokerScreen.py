@@ -3,6 +3,7 @@ from Screens import Screen
 from ui import Button, Card_ui
 from Deck import Deck
 from Card import Card, Rank, Suit
+from HandEvaluator import evaluate_hand
 
 def refill_deck(player):
 
@@ -25,6 +26,28 @@ def refill_to_seven(player):
             new_cards = player.deck.draw(amt_needed)
 
         player.hand.add_cards(new_cards)
+
+
+def draw_bottom_pannel(screen, font, game, hand_rank):
+    bottom_y = 350
+    bottom = pygame.Rect(0, bottom_y, screen.get_width(), screen.get_height() - bottom_y)
+    pygame.draw.rect(screen, (255,255,255), bottom)
+
+    player = game.get_current_player()
+    lines = [
+        f"Phase: POKER",
+        f"Player: {player.color}",
+        f"Discards left: {player.discards_left}", 
+    ]
+
+    x = 35
+    for line in lines:
+        text = font.render(line, True, (0, 0, 0))
+        screen.blit(text, (bottom.x + x, bottom.y + 50))
+        x += 150
+
+    rank_text = font.render(f"Current selected poker hand: {hand_rank}", True, (0, 0, 0))
+    screen.blit(rank_text, (bottom.x + 35, bottom.y + 100))
 
 class PokerScreen:
 
@@ -74,6 +97,14 @@ class PokerScreen:
 
     def draw(self, screen, game):
         screen.fill((100, 100, 100))
+
+        if (len(self.cards_selected) > 0):
+            hand_rank = evaluate_hand([card_ui.card for card_ui in self.cards_selected])
+            curr_poker_hand = hand_rank.name
+        else:
+            curr_poker_hand = "No Cards Selected"
+        
+        draw_bottom_pannel(screen, self.hud_font, game, curr_poker_hand)
         for card_ui in self.cards_displayed:
             card_ui.draw(screen)
         
