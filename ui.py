@@ -54,3 +54,6 @@ class Card_ui:
             event.type == pygame.MOUSEBUTTONDOWN
             and self.rect.collidepoint(event.pos)
         ) 
+    
+    def move_to_y(self, y):
+        self.rect.y = y

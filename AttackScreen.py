@@ -18,7 +18,7 @@ class AttackScreen:
     def handle_event(self, event, game):
 
         if self.skip_button.is_clicked(event):
-            return Screen.MOVEMENT
+            return Screen.POKER
         
         return Screen.ATTACK
     

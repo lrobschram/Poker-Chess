@@ -33,20 +33,54 @@ class PokerScreen:
         self.hud_font = pygame.font.SysFont("dejavusans", 18)
         self.selected = False
         self.cards_selected = []
+        self.cards_displayed = []
+        self.base_y = 150
+        self.selected_y = 110
+
+
+    def toggle_card(self, card_ui):
+        if card_ui in self.cards_selected:
+            # deselect
+            self.cards_selected.remove(card_ui)
+            card_ui.move_to_y(self.base_y)
+        else:
+            # select (only if room)
+            if len(self.cards_selected) >= 5:
+                return
+            self.cards_selected.append(card_ui)
+            card_ui.move_to_y(self.selected_y)
+
+
+    def display_cards(self, game):
+        self.cards_displayed = []
+        self.cards_selected = []  # reset selection when re-displaying
+
+        card_offset = 0
+        for card in game.get_current_player().hand.cards:
+            ui_card = Card_ui((30 + card_offset, 150), card, self.font)
+            self.cards_displayed.append(ui_card)
+            card_offset += 100
 
 
     def handle_event(self, event, game):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            for card_ui in self.cards_displayed:
+                if card_ui.is_clicked(event):
+                    self.toggle_card(card_ui)
+                    break  # only toggle one card per click
+
         return Screen.POKER
     
 
     def draw(self, screen, game):
-        screen.fill((0, 0, 0))
-        test_card = Card_ui((250, 250), Card(Rank.ACE, Suit.HEARTS), self.font)
-        test_card.draw(screen)
-    
+        screen.fill((100, 100, 100))
+        for card_ui in self.cards_displayed:
+            card_ui.draw(screen)
+        
 
     def on_enter(self, screen, game):
         refill_to_seven(game.get_current_player())
+        self.display_cards(game)
         return None
     
 
