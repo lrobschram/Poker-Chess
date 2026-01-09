@@ -101,12 +101,12 @@ class PokerScreen:
             card_offset += 100
 
 
-    def discard(self, game):
+    def discard(self, game, card_ui_list):
         player = game.get_current_player()
         indicies_to_dis = []
 
         # takes indicies of selected cards and discards them
-        for card_ui in self.cards_selected:
+        for card_ui in card_ui_list:
             indicies_to_dis.append(player.hand.cards.index(card_ui.card))
 
         player.hand.discard(indicies_to_dis)
@@ -122,6 +122,13 @@ class PokerScreen:
             return None
 
 
+    """
+        Handles the different events that can happen in the Poker phase
+        (1) Player can select up to 5 cards
+        (2) Player can discard the selected cards up to 2 times
+        (3) Player can play the selected cards, which discards rest of the cards as well
+        (4) Player can skip Poker phase to keep their hand for next turn
+    """
     def handle_event(self, event, game):
 
         player = game.get_current_player()
@@ -129,7 +136,7 @@ class PokerScreen:
         # discard curr selected cards + use discard when discard button clicked 
         if self.discard_button.is_clicked(event):
             if (len(self.cards_selected) > 0) and (player.can_discard()):
-                self.discard(game)
+                self.discard(game, self.cards_selected)
                 player.use_discard()
 
         # calc poker hand and switch to placement screen when play button clicked
@@ -138,7 +145,7 @@ class PokerScreen:
             player.poker_hand = hand_rank
 
             if len(self.cards_selected) > 0:
-                self.discard(game)
+                self.discard(game, self.cards_displayed)
 
             return Screen.ATTACK
 
@@ -151,7 +158,12 @@ class PokerScreen:
 
         return Screen.POKER
     
-
+    """
+        Draws the Poker screen
+        Places cards in the center of the screen with selected cards raised
+        Highlights the card when mouse hovers over it
+        Creates a bottom pannel with player info and discard + play/skip buttons
+    """
     def draw(self, screen, game):
         screen.fill((100, 100, 100))
 

@@ -15,9 +15,6 @@ class Hand:
         if not indices:
             return
 
-        if len(indices) > 5:
-            raise ValueError("Cannot discard more than 5 cards")
-
         if len(set(indices)) != len(indices):
             raise ValueError("Duplicate discard indices")
 
