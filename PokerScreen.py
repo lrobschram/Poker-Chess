@@ -2,8 +2,8 @@ import pygame
 from Screens import Screen
 from ui import Button, Card_ui
 from Deck import Deck
-from Card import Card, Rank, Suit
 from HandEvaluator import evaluate_hand
+
 
 def refill_deck(player):
 
@@ -49,6 +49,7 @@ def draw_bottom_pannel(screen, font, game, hand_rank):
     rank_text = font.render(f"Current selected poker hand: {hand_rank}", True, (0, 0, 0))
     screen.blit(rank_text, (bottom.x + 35, bottom.y + 100))
 
+
 class PokerScreen:
 
     def __init__(self):
@@ -59,19 +60,19 @@ class PokerScreen:
         self.cards_displayed = []
         self.base_y = 150
         self.selected_y = 110
-        self.discard_enabled_color = (200, 200, 200)
-        self.discard_disabled_color = (150, 150, 150)
+        self.button_enabled_color = (200, 200, 200)
+        self.button_disabled_color = (150, 150, 150)
         self.discard_button = Button(
             rect=(550, 400, 160, 40),  # sidebar position
             text="Discard Hand",
             font=self.hud_font,
-            bg_color=self.discard_enabled_color
+            bg_color=self.button_enabled_color
             )
         self.play_button = Button(
             rect=(550, 460, 160, 40),  # sidebar position
             text="Play Hand",
             font=self.hud_font,
-            bg_color=(200, 200, 200)
+            bg_color=self.button_enabled_color
             )
 
 
@@ -92,6 +93,7 @@ class PokerScreen:
         self.cards_displayed = []
         self.cards_selected = []  # reset selection when re-displaying
 
+        # grabs curr hand and creats ui elements for them 100px apart
         card_offset = 0
         for card in game.get_current_player().hand.cards:
             ui_card = Card_ui((30 + card_offset, 150), card, self.font)
@@ -103,22 +105,44 @@ class PokerScreen:
         player = game.get_current_player()
         indicies_to_dis = []
 
+        # takes indicies of selected cards and discards them
         for card_ui in self.cards_selected:
             indicies_to_dis.append(player.hand.cards.index(card_ui.card))
 
         player.hand.discard(indicies_to_dis)
         refill_to_seven(player)
-        player.use_discard()
 
         self.display_cards(game)
 
 
+    def calc_poker_hand(self):
+        if (len(self.cards_selected) > 0):
+            return evaluate_hand([card_ui.card for card_ui in self.cards_selected])
+        else:
+            return None
+
+
     def handle_event(self, event, game):
+
+        player = game.get_current_player()
         
+        # discard curr selected cards + use discard when discard button clicked 
         if self.discard_button.is_clicked(event):
-            if (len(self.cards_selected) > 0) and (game.get_current_player().can_discard()):
+            if (len(self.cards_selected) > 0) and (player.can_discard()):
+                self.discard(game)
+                player.use_discard()
+
+        # calc poker hand and switch to placement screen when play button clicked
+        if self.play_button.is_clicked(event):
+            hand_rank = self.calc_poker_hand()
+            player.poker_hand = hand_rank
+
+            if len(self.cards_selected) > 0:
                 self.discard(game)
 
+            return Screen.ATTACK
+
+        # toggle card when clicked on
         if event.type == pygame.MOUSEBUTTONDOWN:
             for card_ui in self.cards_displayed:
                 if card_ui.is_clicked(event):
@@ -133,18 +157,25 @@ class PokerScreen:
 
         player = game.get_current_player()
 
-        if (len(self.cards_selected) > 0):
-            hand_rank = evaluate_hand([card_ui.card for card_ui in self.cards_selected])
+        hand_rank = self.calc_poker_hand()
+        if (hand_rank != None):
             curr_poker_hand = hand_rank.name
         else:
             curr_poker_hand = "No Cards Selected"
         
         draw_bottom_pannel(screen, self.hud_font, game, curr_poker_hand)
 
-        if player.can_discard():
-            self.discard_button.bg_color = self.discard_enabled_color
+        # grey out the discard button when none selected or out of discards
+        if player.can_discard() and len(self.cards_selected) > 0:
+            self.discard_button.bg_color = self.button_enabled_color
         else:
-            self.discard_button.bg_color = self.discard_disabled_color
+            self.discard_button.bg_color = self.button_disabled_color
+
+        # turn play into skip when no cards selected
+        if len(self.cards_selected) > 0:
+            self.play_button.text = "Play"
+        else:
+            self.play_button.text = "Skip"
 
         self.discard_button.draw(screen)
         self.play_button.draw(screen)
@@ -154,9 +185,10 @@ class PokerScreen:
         
 
     def on_enter(self, screen, game):
-        refill_to_seven(game.get_current_player())
+        player = game.get_current_player()
+        player.start_turn()
+        refill_to_seven(player)
         self.display_cards(game)
-        return None
     
 
     def on_exit(self, screen, game):

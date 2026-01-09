@@ -14,6 +14,7 @@ class Player:
         self.hand = Hand(self.deck.draw(7))
         self.start_turn()
         self.my_pieces = []
+        self.poker_hand = None
 
     def start_turn(self):
         self.movements_left = self.MAX_MOVES
@@ -41,7 +42,7 @@ class Player:
 
     def use_discard(self):
         if not self.can_discard():
-            raise RuntimeError("No attacks left")
+            raise RuntimeError("No discards left")
         self.discards_left -= 1
     
     def print_pieces(self):
