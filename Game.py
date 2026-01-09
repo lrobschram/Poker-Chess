@@ -1,11 +1,5 @@
 from Board import Board
 from Player import Player
-from Pieces import Piece, PieceType
-from HandEvaluator import HandRank
-from MovementRules import MOVEMENT_RULES
-from PokerPhase import PokerPhase
-from PlacementPhase import PlacementPhase
-from MovementPhase import MovementPhase
 
 class Game:
     def __init__(self):
@@ -35,33 +29,3 @@ class Game:
                 return True
         return False
     
-def main():
-    game = Game()
-
-    while(not game.is_game_over()):
-
-        # Get the current player
-        print("~~~~~~~~\n")
-        curr_player = game.get_current_player()
-        curr_player.start_turn()
-        print(f"Current player: {curr_player.color}")
-        print("\nMy current pieces:")
-        curr_player.print_pieces()
-
-        # Poker Phase
-        hand_rank = PokerPhase(curr_player)
-
-        # Placement Phase
-        game.print_board()
-        PlacementPhase(curr_player, hand_rank, game.board)
-
-        # Movement Phase
-        MovementPhase(curr_player, game.board)
-
-        # Attack Phase
-
-        game.switch_player()
-
-
-if __name__ == "__main__":
-    main()
