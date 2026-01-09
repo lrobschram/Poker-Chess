@@ -59,6 +59,20 @@ class PokerScreen:
         self.cards_displayed = []
         self.base_y = 150
         self.selected_y = 110
+        self.discard_enabled_color = (200, 200, 200)
+        self.discard_disabled_color = (150, 150, 150)
+        self.discard_button = Button(
+            rect=(550, 400, 160, 40),  # sidebar position
+            text="Discard Hand",
+            font=self.hud_font,
+            bg_color=self.discard_enabled_color
+            )
+        self.play_button = Button(
+            rect=(550, 460, 160, 40),  # sidebar position
+            text="Play Hand",
+            font=self.hud_font,
+            bg_color=(200, 200, 200)
+            )
 
 
     def toggle_card(self, card_ui):
@@ -85,7 +99,26 @@ class PokerScreen:
             card_offset += 100
 
 
+    def discard(self, game):
+        player = game.get_current_player()
+        indicies_to_dis = []
+
+        for card_ui in self.cards_selected:
+            indicies_to_dis.append(player.hand.cards.index(card_ui.card))
+
+        player.hand.discard(indicies_to_dis)
+        refill_to_seven(player)
+        player.use_discard()
+
+        self.display_cards(game)
+
+
     def handle_event(self, event, game):
+        
+        if self.discard_button.is_clicked(event):
+            if (len(self.cards_selected) > 0) and (game.get_current_player().can_discard()):
+                self.discard(game)
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             for card_ui in self.cards_displayed:
                 if card_ui.is_clicked(event):
@@ -98,6 +131,8 @@ class PokerScreen:
     def draw(self, screen, game):
         screen.fill((100, 100, 100))
 
+        player = game.get_current_player()
+
         if (len(self.cards_selected) > 0):
             hand_rank = evaluate_hand([card_ui.card for card_ui in self.cards_selected])
             curr_poker_hand = hand_rank.name
@@ -105,6 +140,15 @@ class PokerScreen:
             curr_poker_hand = "No Cards Selected"
         
         draw_bottom_pannel(screen, self.hud_font, game, curr_poker_hand)
+
+        if player.can_discard():
+            self.discard_button.bg_color = self.discard_enabled_color
+        else:
+            self.discard_button.bg_color = self.discard_disabled_color
+
+        self.discard_button.draw(screen)
+        self.play_button.draw(screen)
+
         for card_ui in self.cards_displayed:
             card_ui.draw(screen)
         

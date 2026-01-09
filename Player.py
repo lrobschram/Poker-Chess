@@ -39,7 +39,7 @@ class Player:
             raise RuntimeError("No attacks left")
         self.attacks_left -= 1
 
-    def use_attack(self):
+    def use_discard(self):
         if not self.can_discard():
             raise RuntimeError("No attacks left")
         self.discards_left -= 1
