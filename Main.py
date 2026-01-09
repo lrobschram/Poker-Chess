@@ -22,7 +22,7 @@ screens = {
     Screen.ATTACK: AttackScreen(),
 }
 
-curr_phase = Screen.POKER
+curr_phase = Screen.ATTACK
 curr_screen = screens[curr_phase]
 
 running = True

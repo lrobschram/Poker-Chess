@@ -5,7 +5,6 @@ from HandEvaluator import HandRank
 from MovementRules import MOVEMENT_RULES
 from PokerPhase import PokerPhase
 from PlacementPhase import PlacementPhase
-from MovementPhase import MovementPhase
 
 class Game:
     def __init__(self):
