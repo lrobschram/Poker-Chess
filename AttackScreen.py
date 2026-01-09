@@ -29,3 +29,6 @@ class AttackScreen:
 
     def on_enter(self, screen, game):
         return None
+    
+    def on_exit(self, screen, game):
+        return None

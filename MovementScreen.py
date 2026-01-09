@@ -199,3 +199,6 @@ class MovementScreen:
 
         game.get_current_player().start_turn()
         self.pieces_moved = []
+
+    def on_exit(self, screen, game):
+        return None

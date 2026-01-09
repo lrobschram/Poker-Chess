@@ -22,7 +22,7 @@ screens = {
     Screen.ATTACK: AttackScreen(),
 }
 
-curr_phase = Screen.MOVEMENT
+curr_phase = Screen.POKER
 curr_screen = screens[curr_phase]
 
 running = True
@@ -38,10 +38,11 @@ while running:
 
         # change screens when switching to a new phase
         if new_phase != curr_phase:
-            # TODO add some "on_exit" and "on_enter" methods
+            
+            curr_screen.on_exit(screen, game) # clean up screen before switching
             curr_phase = new_phase
             curr_screen = screens[curr_phase]
-            curr_screen.on_enter(screen, game)
+            curr_screen.on_enter(screen, game) # set up new screen just switched to
 
     curr_screen.draw(screen, game)
     pygame.display.flip()
