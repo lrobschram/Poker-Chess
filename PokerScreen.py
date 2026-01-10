@@ -3,6 +3,7 @@ from Screens import Screen
 from ui import Button, Card_ui
 from Deck import Deck
 from HandEvaluator import evaluate_hand
+from Card import Rank, Suit
 
 
 def refill_deck(player):
@@ -63,13 +64,20 @@ class PokerScreen:
         self.button_enabled_color = (200, 200, 200)
         self.button_disabled_color = (150, 150, 150)
         self.discard_button = Button(
-            rect=(550, 400, 160, 40),  # sidebar position
+            rect=(550, 400, 160, 40),  
             text="Discard Hand",
             font=self.hud_font,
             bg_color=self.button_enabled_color
             )
         self.play_button = Button(
-            rect=(550, 460, 160, 40),  # sidebar position
+            rect=(550, 460, 160, 40), 
+            text="Play Hand",
+            font=self.hud_font,
+            bg_color=self.button_enabled_color
+            )
+        self.sort = Rank
+        self.sort_button = Button(
+            rect=(100, 500, 160, 40), 
             text="Play Hand",
             font=self.hud_font,
             bg_color=self.button_enabled_color
@@ -90,8 +98,14 @@ class PokerScreen:
 
 
     def display_cards(self, game):
+        player = game.get_current_player()
         self.cards_displayed = []
         self.cards_selected = []  # reset selection when re-displaying
+
+        if self.sort == Rank:
+            player.hand.sort_by_rank()
+        else:
+            player.hand.sort_by_suit()
 
         # grabs curr hand and creats ui elements for them 100px apart
         card_offset = 0
@@ -148,6 +162,14 @@ class PokerScreen:
                 self.discard(game, self.cards_displayed)
 
             return Screen.PLACEMENT
+        
+        if self.sort_button.is_clicked(event):
+            if self.sort == Rank:
+                self.sort = Suit
+            else:
+                self.sort = Rank
+            
+            self.display_cards(game)
 
         # toggle card when clicked on
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -191,6 +213,13 @@ class PokerScreen:
 
         self.discard_button.draw(screen)
         self.play_button.draw(screen)
+
+        if self.sort == Rank:
+            self.sort_button.text = "Sort by Suit"
+        else:
+            self.sort_button.text = "Sort by Rank"
+
+        self.sort_button.draw(screen)
 
         for card_ui in self.cards_displayed:
             card_ui.draw(screen)

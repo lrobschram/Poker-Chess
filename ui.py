@@ -115,9 +115,13 @@ class Card_ui:
         pygame.draw.rect(screen, border_color, self.rect, 2, border_radius=8)
 
         # Determine text color by suit
-        if self.card_object.suit in (Suit.DIAMONDS, Suit.HEARTS):
+        if self.card_object.suit == Suit.HEARTS:
             text_color = (255, 0, 0)
-        else:
+        elif self.card_object.suit == Suit.DIAMONDS:
+            text_color = (255, 165, 0)
+        elif self.card_object.suit == Suit.CLUBS:
+            text_color = (0, 0, 255)
+        else: 
             text_color = (0, 0, 0)
 
         text_surf = self.font.render(str(self.card_object), True, text_color)

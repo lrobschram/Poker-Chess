@@ -5,3 +5,5 @@ class Screen(Enum):
     PLACEMENT = auto()
     MOVEMENT = auto()
     ATTACK = auto()
+    GAME_OVER = auto()
+    START = auto()
