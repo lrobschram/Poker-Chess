@@ -1,7 +1,10 @@
 from MovementRules import (
-    ANY_ONE_DIRECTION_OFFSET,
-    KNIGHT_OFFSETS
+    ANY_ONE_DIRECTION_OFFSETS,
+    KNIGHT_OFFSETS,
+    ORTHOGONAL_OFFSETS,
+    DIAGONAL_OFFSETS
 )
+
 
 from Pieces import PieceType
 
@@ -74,7 +77,7 @@ def catapult_attacks(board, piece):
     """
     targets = []
 
-    for dr, dc in ANY_ONE_DIRECTION_OFFSET:
+    for dr, dc in ORTHOGONAL_OFFSETS:
         for step in range(1, piece.range + 1):
             r = piece.row + dr * step
             c = piece.col + dc * step
@@ -91,6 +94,9 @@ def catapult_attacks(board, piece):
 # -------------------------------------------------
 # Public API (used by Game / AttackScreen)
 # -------------------------------------------------
+
+
+
 
 def get_attack_targets(board, piece):
     """
@@ -109,6 +115,6 @@ def get_attack_targets(board, piece):
     return ray_attacks(
         board,
         piece,
-        ANY_ONE_DIRECTION_OFFSET,
+        ORTHOGONAL_OFFSETS,
         piece.range
     )

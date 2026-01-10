@@ -16,7 +16,7 @@ class PieceType(Enum):
 PIECE_STATS = {
     # Highcard
     PieceType.WARRIOR: {
-        "health": 1,
+        "health": 2,
         "attack": 1,
         "movement": 1,
         "range": 1,
@@ -26,7 +26,7 @@ PIECE_STATS = {
 
     # Pair
     PieceType.ARCHER: {
-        "health": 1,
+        "health": 2,
         "attack": 1,
         "movement": 1,
         "range": 2,  # +1 range
@@ -76,7 +76,7 @@ PIECE_STATS = {
 
     # Full House
     PieceType.DIREWOLF: {
-        "health": 2,
+        "health": 5,
         "attack": 3,
         "movement": 4,
         "range": 1,
@@ -86,7 +86,7 @@ PIECE_STATS = {
 
     # Four of a Kind
     PieceType.JESTER: {
-        "health": 4,
+        "health": 7,
         "attack": 4,
         "movement": 2,
         "range": 1,
@@ -96,8 +96,8 @@ PIECE_STATS = {
 
     # Straight Flush
     PieceType.QUEEN: {
-        "health": 5,
-        "attack": 5,
+        "health": 6,
+        "attack": 3,
         "movement": 2,
         "range": 2,  # Range+1
         "movement_rule": "any",
@@ -106,7 +106,7 @@ PIECE_STATS = {
 
     # King (for completeness)
     PieceType.KING: {
-        "health": 5,
+        "health": 7,
         "attack": 2,
         "movement": 1,
         "range": 1,

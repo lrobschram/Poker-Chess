@@ -3,7 +3,7 @@ FORWARD_OFFSETS = {
     "Black": [(1, 0), (0, -1), (0, 1)]
 }
 
-ANY_ONE_DIRECTION_OFFSET = [
+ANY_ONE_DIRECTION_OFFSETS = [
     (1, 0), (-1, 0), (0, 1), (0, -1),
     (1, 1), (1, -1), (-1, 1), (-1, -1)
 ]
@@ -14,7 +14,19 @@ KNIGHT_OFFSETS = [
     (1, 2), (1, -2),
     (-1, 2), (-1, -2)
 ]
+# Orthogonal directions only (NO diagonals)
+ORTHOGONAL_OFFSETS = [
+    (1, 0),   # down
+    (-1, 0),  # up
+    (0, 1),   # right
+    (0, -1),  # left
+]
 
+# If you still need diagonals elsewhere
+DIAGONAL_OFFSETS = [
+    (1, 1), (1, -1),
+    (-1, 1), (-1, -1),
+]
 
 #helper method that returns legal moves based on the offset of the pieces
 @staticmethod
@@ -60,7 +72,7 @@ def ray_moves(board, piece, directions, max_distance):
 @staticmethod
 def any_dir_moves(board, piece):
     # max_distance comes from piece.movement
-    return ray_moves(board, piece, ANY_ONE_DIRECTION_OFFSET, piece.movement)
+    return ray_moves(board, piece, ORTHOGONAL_OFFSETS, piece.movement)
 
 # warrior, archer
 @staticmethod
@@ -69,11 +81,13 @@ def forward_moves(board, piece):
 #king
 @staticmethod
 def king_moves(board, piece):
-    return offset_moves(board, piece, ANY_ONE_DIRECTION_OFFSET)
+    return offset_moves(board, piece, ANY_ONE_DIRECTION_OFFSETS)
 #knight
 @staticmethod
 def knight_moves(board, piece):
     return offset_moves(board, piece, KNIGHT_OFFSETS)
+
+
 
 #dire wolf
 @staticmethod
@@ -91,14 +105,7 @@ def wolf_moves(board, piece):
     legal.extend(ray_moves(board, piece, forward_dir, 4))
 
 
-    # 1 square in any direction
-    ANY_ONE_DIRECTION_OFFSET = [
-        (1, 0), (-1, 0), (0, 1), (0, -1),
-        (1, 1), (1, -1), (-1, 1), (-1, -1)
-    ]
-
-
-    legal.extend(offset_moves(board, piece, ANY_ONE_DIRECTION_OFFSET))
+    legal.extend(offset_moves(board, piece, ORTHOGONAL_OFFSETS))
 
     return legal
 

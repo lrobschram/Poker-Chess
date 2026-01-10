@@ -4,6 +4,8 @@ from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_borders, d
 from AttackRules import get_attack_targets
 from Pieces import PieceType
 
+
+
 # -------------------- Utility Functions --------------------
 
 def draw_panel(screen, font, game, x0, w, h, phase="Attack", attacks_left=0):
@@ -57,6 +59,8 @@ class AttackScreen:
             if square:
                 self.handle_board_click(game, *square)
 
+        if not game.get_current_player().can_attack():
+            return Screen.POKER
         return Screen.ATTACK
 
     # -------------------- Board Click Logic --------------------
@@ -109,14 +113,11 @@ class AttackScreen:
 
         # Mark attacker as used
         self.used_attackers.add(attacker)
-        self.attacks_left -= 1
+        game.get_current_player().use_attack()
 
         # Clear selection
         self.selected_attacker = None
         self.valid_targets = []
-
-        if self.attacks_left <= 0:
-            return Screen.MOVEMENT
 
     # -------------------- Drawing --------------------
 
@@ -145,6 +146,7 @@ class AttackScreen:
             inner_y = board_y + used_piece.row * TILE
             screen.blit(overlay, (inner_x, inner_y))
 
+
     def draw(self, screen, game):
         now = pygame.time.get_ticks()
         if self.error and now - self.error_start_time > self.ERROR_DURATION:
@@ -162,7 +164,7 @@ class AttackScreen:
         if self.error:
             draw_error(screen, self.err_loc, board_x, board_y)
 
-        draw_panel(screen, self.hud_font, game, panel_x, panel_w, panel_h, phase="ATTACK", attacks_left=self.attacks_left)
+        draw_panel(screen, self.hud_font, game, panel_x, panel_w, panel_h, phase="ATTACK", attacks_left= game.get_current_player().attacks_left)
         self.skip_button.draw(screen)
 
         if self.last_clicked != None:
@@ -171,7 +173,6 @@ class AttackScreen:
     # -------------------- Lifecycle --------------------
 
     def on_enter(self, screen, game):
-        self.attacks_left = 3
         self.used_attackers = set()
         self.selected_attacker = None
         self.valid_targets = []
