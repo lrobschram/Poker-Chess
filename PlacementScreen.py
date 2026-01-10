@@ -11,9 +11,9 @@ HAND_TO_PIECE = {
     HandRank.TWO_PAIR:      PieceType.KNIGHT,
     HandRank.THREE_KIND:    PieceType.WIZARD,
     HandRank.STRAIGHT:      PieceType.CATAPULT,
-    HandRank.FLUSH:         PieceType.JUGGERNAUT,
+    HandRank.FLUSH:         PieceType.HEALER,
     HandRank.FULL_HOUSE:    PieceType.DIREWOLF,
-    HandRank.FOUR_KIND:     PieceType.JESTER,
+    HandRank.FOUR_KIND:     PieceType.JUGGERNAUT,
     HandRank.STRAIGHT_FLUSH: PieceType.QUEEN,
 }
 

@@ -73,7 +73,41 @@ def draw_stats(screen, font, piece, x0):
         text = font.render(line, True, (0, 0, 0))
         screen.blit(text, (x0 + 15, y))
         y += 25
+    
+    bar_width = 160
+    bar_height = 14
 
+    bar_x = x0 + 15
+    bar_y = y + 10  # just below text
+
+    ratio = max(0, min(1, piece.health / piece.max_health))
+
+    green_width = int(bar_width * ratio)
+    red_width = bar_width - green_width
+
+    # Green = current HP
+    pygame.draw.rect(
+        screen,
+        (0, 180, 0),
+        (bar_x, bar_y, green_width, bar_height),
+        border_radius=4
+    )
+
+    # Red = missing HP
+    pygame.draw.rect(
+        screen,
+        (200, 0, 0),
+        (bar_x + green_width, bar_y, red_width, bar_height)
+    )
+
+    # Outline
+    pygame.draw.rect(
+        screen,
+        (0, 0, 0),
+        (bar_x, bar_y, bar_width, bar_height),
+        2,
+        border_radius=4
+    )
 
 class Button:
     def __init__(self, rect, text, font, bg_color, text_color=(0,0,0)):

@@ -70,29 +70,49 @@ class AttackScreen:
         piece = board.grid[row][col]
         current_player = game.get_current_player()
 
-        # Step 1: If attacker already selected, attempt attack
+            # Step 1: If attacker already selected, attempt action
         if self.selected_attacker:
+            target_piece = board.get_piece((row, col))
+
             if (row, col) in self.valid_targets:
-                self.last_clicked = game.board.get_piece( (row, col) )
-                self.resolve_attack(game, row, col)
-            else:
-                # Invalid attack: deselect attacker and show error
-                # self.trigger_error((row, col))
+                self.last_clicked = target_piece
+
+                # Decide heal vs attack
+                if target_piece.owner == self.selected_attacker.owner:
+                    # Heal
+                    target_piece.take_heal(self.selected_attacker.heal)
+                else:
+                    # Attack
+                    target_piece.take_damage(self.selected_attacker.attack)
+                    if target_piece.is_piece_dead():
+                        if target_piece.type == PieceType.KING:
+                            game.game_over(self.selected_attacker.owner)
+                        board.remove_piece(target_piece)
+
+                # Mark attacker as used
+                self.used_attackers.add(self.selected_attacker)
+                current_player.use_attack()
+
+                # Clear selection
                 self.selected_attacker = None
                 self.valid_targets = []
+
+            else:
+                # Invalid click
+                self.trigger_error((row, col))
+                self.selected_attacker = None
+                self.valid_targets = []
+
             return
 
-        # Step 2: Select a new piece if none selected
+        # Step 2: Select new attacker
         if piece and piece.owner == current_player.color:
-
-            self.last_clicked = piece
-
             if piece in self.used_attackers:
                 self.trigger_error((row, col))  # cannot attack twice
                 return
-            # Valid piece: select and show targets
             self.selected_attacker = piece
             self.valid_targets = get_attack_targets(board, piece)
+            self.last_clicked = piece
         else:
             # Not a friendly piece
             self.last_clicked = piece

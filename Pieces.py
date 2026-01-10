@@ -8,25 +8,27 @@ class PieceType(Enum):
     KNIGHT = auto()
     DIREWOLF = auto()
     CATAPULT = auto()
-    JUGGERNAUT = auto()
+    HEALER = auto()
     WIZARD = auto()
-    JESTER = auto()
+    JUGGERNAUT = auto()
     QUEEN = auto()
     
 PIECE_STATS = {
     # Highcard
     PieceType.WARRIOR: {
         "health": 2,
+        "heal": 0,
         "attack": 1,
         "movement": 1,
         "range": 1,
         "movement_rule": "forward_only",
-        "promotes_to": PieceType.JESTER
+        "promotes_to": PieceType.JUGGERNAUT
     },
 
     # Pair
     PieceType.ARCHER: {
         "health": 2,
+        "heal": 0,
         "attack": 1,
         "movement": 1,
         "range": 2,  # +1 range
@@ -37,6 +39,7 @@ PIECE_STATS = {
     # Two-Pair
     PieceType.KNIGHT: {
         "health": 3,
+        "heal": 0,
         "attack": 1,
         "movement": 1,
         "range": 1,
@@ -47,6 +50,7 @@ PIECE_STATS = {
     # 3 of a Kind
     PieceType.WIZARD: {
         "health": 2,
+        "heal": 0,
         "attack": 2,
         "movement": 1,
         "range": 2,  # +1 range
@@ -57,6 +61,7 @@ PIECE_STATS = {
     # Straight
     PieceType.CATAPULT: {
         "health": 3,
+        "heal": 0,
         "attack": 2,
         "movement": 1,
         "range": 3,  # +2 range
@@ -65,9 +70,10 @@ PIECE_STATS = {
     },
 
     # Flush
-    PieceType.JUGGERNAUT: {
+    PieceType.HEALER: {
         "health": 5,
-        "attack": 2,
+        "heal": 2,
+        "attack": 2,  
         "movement": 2,
         "range": 1,
         "movement_rule": "any",
@@ -77,6 +83,7 @@ PIECE_STATS = {
     # Full House
     PieceType.DIREWOLF: {
         "health": 5,
+        "heal": 0,
         "attack": 3,
         "movement": 4,
         "range": 1,
@@ -85,8 +92,9 @@ PIECE_STATS = {
     },
 
     # Four of a Kind
-    PieceType.JESTER: {
+    PieceType.JUGGERNAUT: {
         "health": 7,
+        "heal": 0,
         "attack": 4,
         "movement": 2,
         "range": 1,
@@ -97,6 +105,7 @@ PIECE_STATS = {
     # Straight Flush
     PieceType.QUEEN: {
         "health": 6,
+        "heal": 0,
         "attack": 3,
         "movement": 2,
         "range": 2,  # Range+1
@@ -107,6 +116,7 @@ PIECE_STATS = {
     # King (for completeness)
     PieceType.KING: {
         "health": 7,
+        "heal": 0,
         "attack": 2,
         "movement": 1,
         "range": 1,
@@ -122,8 +132,8 @@ PIECE_SYMBOLS = {
     "ARCHER": "A",
     "WARRIOR": "W",
     "DIREWOLF": "D",
-    "JESTER": "J",
-    "JUGGERNAUT": "G",   
+    "HEALER": "H",
+    "JUGGERNAUT": "J",   
     "WIZARD": "Z",
     "CATAPULT": "C",
 }
@@ -149,6 +159,7 @@ class Piece:
         self.range = stats["range"]
         self.movement_rule = stats["movement_rule"]
         self.promotes_to = stats["promotes_to"]
+        self.heal = stats["heal"]
         
     #Sets first initial of white pieces to uppercase
     def piece_initial(self):
@@ -169,6 +180,7 @@ class Piece:
             self.health = 0  # Clamp to 0 to avoid negative health
         return self.is_piece_dead()
     
+    
     def is_piece_dead(self):
         return self.health <= 0
         
@@ -176,3 +188,27 @@ class Piece:
         if (self.promotes_to != None):
             self.type = self.promotes_to
             self.apply_stats()
+    
+    
+    def take_heal(self, amount):
+    
+        if self.health >= self.max_health:
+            return False
+        self.health = min(self.max_health, self.health + amount)
+        return True
+    
+    def perform_action(self, target):
+        
+        if target is None:
+            return False
+
+        # Heal allies if this piece can heal
+        if target.owner == self.owner and getattr(self, "heal", 0) > 0:
+            return target.take_heal(self.heal)  # True if heal applied
+
+        # Damage enemies
+        if target.owner != self.owner:
+            target.take_damage(self.attack)  # death is handled separately
+            return True
+
+        return False

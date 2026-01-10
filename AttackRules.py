@@ -42,6 +42,32 @@ def ray_attacks(board, piece, directions, max_range):
 
     return targets
 
+from MovementRules import ORTHOGONAL_OFFSETS
+
+def get_heal_targets(board, healer):
+
+    targets = []
+
+    for dr, dc in ORTHOGONAL_OFFSETS:  # only orthogonal directions
+        for step in range(1, healer.range + 1):
+            r = healer.row + dr * step
+            c = healer.col + dc * step
+
+            if not board.in_bounds((r, c)):
+                break
+
+            target = board.get_piece((r, c))
+            if target is None:
+                continue
+
+            # Only heal allies that are not full health
+            if target.owner == healer.owner and target.health < target.max_health:
+                targets.append((r, c))
+
+            break  # healer stops at first piece in that direction
+
+    return targets
+
 
 # -------------------------------------------------
 # Offset-only attacks (Knight-style)
@@ -91,30 +117,39 @@ def catapult_attacks(board, piece):
 
     return targets
 
-# -------------------------------------------------
-# Public API (used by Game / AttackScreen)
-# -------------------------------------------------
+# Healer-specific healing targets (orthogonal only)
+def get_heal_targets(board, healer):
+    targets = []
+    for dr, dc in ORTHOGONAL_OFFSETS:
+        for step in range(1, healer.range + 1):
+            r = healer.row + dr * step
+            c = healer.col + dc * step
+            if not board.in_bounds((r, c)):
+                break
+            target = board.get_piece((r, c))
+            if target is None:
+                continue
+            if target.owner == healer.owner and target.health < target.max_health:
+                targets.append((r, c))
+            break  # healer stops at first piece in that direction
+    return targets
 
-
-
-
+# Public API
 def get_attack_targets(board, piece):
-    """
-    Returns a list of (row, col) squares that this piece can attack.
-    """
+    targets = []
 
-    # Knight: offset-only
+     # Healer: include both healable allies and attackable enemies
+    if piece.type == PieceType.HEALER:
+        targets = get_heal_targets(board, piece)  # allies
+        targets += ray_attacks(board, piece, ORTHOGONAL_OFFSETS, piece.range)  # enemies
+        return targets
+    # Add normal attacks
     if piece.type == PieceType.KNIGHT:
-        return offset_attacks(board, piece, KNIGHT_OFFSETS)
+        targets += offset_attacks(board, piece, KNIGHT_OFFSETS)
 
-    # Catapult: ignores line of sight
     if piece.type == PieceType.CATAPULT:
-        return catapult_attacks(board, piece)
+        targets += catapult_attacks(board, piece)
+    else:
+        targets += ray_attacks(board, piece, ORTHOGONAL_OFFSETS, piece.range)
 
-    # Default: all directions, ray-based
-    return ray_attacks(
-        board,
-        piece,
-        ORTHOGONAL_OFFSETS,
-        piece.range
-    )
+    return targets

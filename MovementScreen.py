@@ -151,6 +151,8 @@ class MovementScreen:
 
         if self.last_clicked != None:
             draw_stats(screen, self.hud_font, self.last_clicked, panel_x)
+            
+            
 
     """
         Sets up the Movement phase on entering
