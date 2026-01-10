@@ -1,6 +1,6 @@
 import pygame
 from Screens import Screen
-from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights, draw_pieces, get_square_from_mouse
+from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights, draw_pieces, get_square_from_mouse, draw_stats
 
 
 def draw_panel(screen, font, game, x0, w, h):
@@ -40,6 +40,7 @@ class MovementScreen:
             font=self.hud_font,
             bg_color=(200, 200, 200)
             )
+        self.last_clicked = None
 
     """
         Handles the different events that can happen in the Movement phase
@@ -68,6 +69,9 @@ class MovementScreen:
                 piece = game.board.get_piece( (row, col) )
 
                 if piece != None:
+
+                    self.last_clicked = piece
+
                     # piece must belong to curr player and can only move once a turn
                     if (not piece in self.pieces_moved) and (game.get_current_player().color == piece.owner):
                         self.curr_piece = (row, col)
@@ -98,6 +102,8 @@ class MovementScreen:
 
                         self.pieces_moved.append(new_piece)
                         curr_player.use_move()
+                else:
+                    self.last_clicked = game.board.get_piece((row, col))
 
                 self.selected = False
                 self.pos_moves = []
@@ -143,6 +149,9 @@ class MovementScreen:
         draw_panel(screen, self.hud_font, game, panel_x, panel_w, panel_h)
         self.skip_button.draw(screen)
 
+        if self.last_clicked != None:
+            draw_stats(screen, self.hud_font, self.last_clicked, panel_x)
+
     """
         Sets up the Movement phase on entering
         Resets the amount of moves + clears pieces moved
@@ -153,4 +162,5 @@ class MovementScreen:
         self.pieces_moved = []
 
     def on_exit(self, screen, game):
+        self.last_clicked = None
         return None

@@ -1,6 +1,6 @@
 import pygame
 from Screens import Screen
-from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_borders, draw_pieces, get_square_from_mouse
+from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_borders, draw_pieces, get_square_from_mouse, draw_stats
 from AttackRules import get_attack_targets
 from Pieces import PieceType
 
@@ -44,6 +44,7 @@ class AttackScreen:
             font=self.hud_font,
             bg_color=(200, 200, 200)
         )
+        self.last_clicked = None
 
     # -------------------- Event Handling --------------------
 
@@ -68,6 +69,7 @@ class AttackScreen:
         # Step 1: If attacker already selected, attempt attack
         if self.selected_attacker:
             if (row, col) in self.valid_targets:
+                self.last_clicked = game.board.get_piece( (row, col) )
                 self.resolve_attack(game, row, col)
             else:
                 # Invalid attack: deselect attacker and show error
@@ -78,6 +80,9 @@ class AttackScreen:
 
         # Step 2: Select a new piece if none selected
         if piece and piece.owner == current_player.color:
+
+            self.last_clicked = piece
+
             if piece in self.used_attackers:
                 self.trigger_error((row, col))  # cannot attack twice
                 return
@@ -86,6 +91,7 @@ class AttackScreen:
             self.valid_targets = get_attack_targets(board, piece)
         else:
             # Not a friendly piece
+            self.last_clicked = piece
             self.trigger_error((row, col))
 
     # -------------------- Resolve Attack --------------------
@@ -158,6 +164,9 @@ class AttackScreen:
 
         draw_panel(screen, self.hud_font, game, panel_x, panel_w, panel_h, phase="ATTACK", attacks_left=self.attacks_left)
         self.skip_button.draw(screen)
+
+        if self.last_clicked != None:
+            draw_stats(screen, self.hud_font, self.last_clicked, panel_x)
 
     # -------------------- Lifecycle --------------------
 

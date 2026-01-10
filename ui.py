@@ -59,6 +59,22 @@ def draw_error(screen, pos, x0=0, y0=0):
     pygame.draw.rect(screen, (255, 0, 0), rect, 4)
 
 
+def draw_stats(screen, font, piece, x0):
+    lines = [
+        f"Piece Clicked: ",
+        f"{piece.type.name}",
+        f"{piece.owner}",
+        f"{piece.attack} att",
+        f"{piece.health} hp"
+            ]
+    
+    y = 275
+    for line in lines:
+        text = font.render(line, True, (0, 0, 0))
+        screen.blit(text, (x0 + 15, y))
+        y += 25
+
+
 class Button:
     def __init__(self, rect, text, font, bg_color, text_color=(0,0,0)):
         self.rect = pygame.Rect(rect)
