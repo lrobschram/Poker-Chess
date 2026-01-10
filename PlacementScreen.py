@@ -24,7 +24,7 @@ def calc_piece(hand_rank, player):
 
 def draw_panel(screen, font, game, piece, x0, w, h):
     # panel background
-    pygame.draw.rect(screen, (220, 220, 220), pygame.Rect(x0, 0, w, h))
+    pygame.draw.rect(screen, (220, 220, 255), pygame.Rect(x0, 0, w, h))
 
     player = game.get_current_player()
 
@@ -64,9 +64,21 @@ class PlacementScreen:
             )
         
     def handle_event(self, event, game):
+
+        player = game.get_current_player()
         
-        if self.skip_button.is_clicked(event):
+        if self.skip_button.is_clicked(event) or self.curr_piece == None:
             return Screen.MOVEMENT
+        
+        if event.type == pygame.MOUSEBUTTONDOWN:
+
+            sq = get_square_from_mouse(event.pos, 0, 0)
+
+            if sq in self.pos_spaces:
+                game.board.place_piece(self.curr_piece, sq)
+                player.my_pieces.append(self.curr_piece)
+                return Screen.MOVEMENT
+
         
         return Screen.PLACEMENT
     

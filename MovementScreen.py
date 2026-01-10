@@ -5,7 +5,7 @@ from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights
 
 def draw_panel(screen, font, game, x0, w, h):
     # panel background
-    pygame.draw.rect(screen, (220, 220, 220), pygame.Rect(x0, 0, w, h))
+    pygame.draw.rect(screen, (220, 255, 220), pygame.Rect(x0, 0, w, h))
 
     player = game.get_current_player()
     lines = [
@@ -36,7 +36,7 @@ class MovementScreen:
         self.ERROR_DURATION = 500  # milliseconds (0.5 seconds)
         self.skip_button = Button(
             rect=(COLS*TILE + 20, 200, 160, 40),  # sidebar position
-            text="Skip to Attack",
+            text="Skip Movement",
             font=self.hud_font,
             bg_color=(200, 200, 200)
             )

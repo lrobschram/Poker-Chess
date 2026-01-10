@@ -7,7 +7,7 @@ from Pieces import PieceType
 # -------------------- Utility Functions --------------------
 
 def draw_panel(screen, font, game, x0, w, h, phase="Attack", attacks_left=0):
-    pygame.draw.rect(screen, (220, 220, 220), pygame.Rect(x0, 0, w, h))
+    pygame.draw.rect(screen, (255, 220, 220), pygame.Rect(x0, 0, w, h))
     player = game.get_current_player()
     lines = [
         f"Phase: {phase}",
