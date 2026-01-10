@@ -37,3 +37,9 @@ class Hand:
     
     def add_cards(self, cards):
         self.cards.extend(cards)
+
+    def sort_by_rank(self):
+        self.cards.sort(key=lambda card: (card.rank.value, card.suit.value), reverse=True)
+
+    def sort_by_suit(self):
+        self.cards.sort(key=lambda card: (card.suit.value, card.rank.value))
