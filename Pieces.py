@@ -146,6 +146,7 @@ class Piece:
         self.owner = owner
         self.row = None 
         self.col = None 
+        self.bonus = "commonUnit"
         self.apply_stats()
 
     #applys all stats to the piece

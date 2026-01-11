@@ -32,7 +32,7 @@ def add_bonus_piece(piece, pieceBonus):
     elif(pieceBonus == "royalUnit"):
         piece.addBonusDamage()
         piece.addBonusHealth()
-    else: return 
+    piece.bonus = pieceBonus
     
 
 
@@ -45,14 +45,19 @@ def draw_panel(screen, font, game, piece, x0, w, h):
 
     if piece != None:
         piece_text = piece.type.name.replace("_", " ").title()
+        bonus_text = f"{piece.bonus}"
     else:
         piece_text = "Skipped"
+        bonus_text = None
 
     lines = [
         f"Phase: Placement",
         f"Player: {player.color}",
         f"Piece created: {piece_text}", 
     ]
+
+    if bonus_text != None:
+        lines.append(bonus_text)
 
     y = 20
     for line in lines:

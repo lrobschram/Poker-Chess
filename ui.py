@@ -65,7 +65,8 @@ def draw_stats(screen, font, piece, x0):
         f"{piece.type.name}",
         f"{piece.owner}",
         f"{piece.attack} att",
-        f"{piece.health} hp"
+        f"{piece.health} hp",
+        f"{piece.bonus}"
             ]
     
     y = 275
