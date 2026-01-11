@@ -24,7 +24,7 @@ def is_straight(ranks):
     return ranks == list(range(ranks[0], ranks[0] + 5))
 
 def chip_counter(cards):
-    ranks = [card_ui.card.rank.value for card_ui in cards]
+    ranks = [card.rank.value for card in cards]
     chip_counter = 0;
     for rank in ranks:
         chip_counter += rank
@@ -47,39 +47,68 @@ def add_bonus (chips):
 
 
 def evaluate_hand(cards):
+    """
+    Returns:
+        (HandRank, list[Card])   # ONLY the cards that form the poker hand
+    """
     n = len(cards)
     if n == 0:
         raise ValueError("Hand cannot be empty")
 
-    ranks = [card.rank.value for card in cards]
-    suits = [card.suit for card in cards]
-
+    ranks = [c.rank.value for c in cards]
+    suits = [c.suit for c in cards]
     rank_counts = Counter(ranks)
+
+    # Map rank -> cards with that rank
+    rank_to_cards = {}
+    for c in cards:
+        rank_to_cards.setdefault(c.rank.value, []).append(c)
+
     counts = sorted(rank_counts.values(), reverse=True)
 
-    # --- Count-based hands (work with < 5 cards) ---
-    if counts == [4, 1] or counts == [4]:
-        return HandRank.FOUR_KIND
-    if counts == [3, 2]:      # only possible if 5 cards
-        return HandRank.FULL_HOUSE
-    if counts == [3, 1, 1] or counts == [3, 1] or counts == [3]:
-        return HandRank.THREE_KIND
-    if counts == [2, 2, 1] or counts == [2, 2]:
-        return HandRank.TWO_PAIR
-    if counts == [2, 1, 1, 1] or counts == [2, 1] or counts == [2, 1, 1] or counts == [2]:
-        return HandRank.PAIR
+    # --- Count-based hands ---
+    if counts[:1] == [4]:
+        quad_rank = max(rank_counts, key=lambda r: rank_counts[r])
+        return HandRank.FOUR_KIND, rank_to_cards[quad_rank]
 
-    # --- Only evaluate 5-card structure hands ---
+    if counts == [3, 2]:
+        trip_rank = max(rank_counts, key=lambda r: (rank_counts[r], r))
+        pair_rank = min(rank_counts, key=lambda r: (rank_counts[r], r))
+        return HandRank.FULL_HOUSE, rank_to_cards[trip_rank] + rank_to_cards[pair_rank]
+
+    if counts[:1] == [3]:
+        trip_rank = max(rank_counts, key=lambda r: (rank_counts[r], r))
+        return HandRank.THREE_KIND, rank_to_cards[trip_rank]
+
+    if counts[:2] == [2, 2]:
+        pair_ranks = sorted(
+            [r for r, c in rank_counts.items() if c == 2],
+            reverse=True
+        )
+        return (
+            HandRank.TWO_PAIR,
+            rank_to_cards[pair_ranks[0]] + rank_to_cards[pair_ranks[1]]
+        )
+
+    if counts[:1] == [2]:
+        pair_rank = max(rank_counts, key=lambda r: (rank_counts[r], r))
+        return HandRank.PAIR, rank_to_cards[pair_rank]
+
+    # --- 5-card structure hands ---
     if n == 5:
         flush = len(set(suits)) == 1
-        straight = is_straight(ranks)
+        straight = is_straight(cards)
 
         if straight and flush:
-            return HandRank.STRAIGHT_FLUSH
-        if flush:
-            return HandRank.FLUSH
-        if straight:
-            return HandRank.STRAIGHT
+            return HandRank.STRAIGHT_FLUSH, cards
 
-    # default fallback
-    return HandRank.HIGH_CARD
+        if flush:
+            return HandRank.FLUSH, cards
+
+        if straight:
+            return HandRank.STRAIGHT, cards
+
+    # --- Default ---
+    # High card = single highest card
+    high = max(cards, key=lambda c: c.rank.value)
+    return HandRank.HIGH_CARD, [high]

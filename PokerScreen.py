@@ -48,7 +48,7 @@ def draw_bottom_pannel(screen, font, game, hand_rank, chips):
         screen.blit(text, (bottom.x + x, bottom.y + 50))
         x += 150
 
-    rank_text = font.render(f"Current selected poker hand: {hand_rank}", True, (0, 0, 0))
+    rank_text = font.render(f"Poker Hand: {hand_rank}", True, (0, 0, 0))
     screen.blit(rank_text, (bottom.x + 35, bottom.y + 100))
 
     chip_text = font.render(f"Chip Count: {chips}", True, (0, 0, 0))
@@ -86,6 +86,7 @@ class PokerScreen:
             font=self.hud_font,
             bg_color=self.button_enabled_color
             )
+        self.cards_to_count = []
 
 
     def toggle_card(self, card_ui):
@@ -135,7 +136,9 @@ class PokerScreen:
 
     def calc_poker_hand(self):
         if (len(self.cards_selected) > 0):
-            return evaluate_hand([card_ui.card for card_ui in self.cards_selected])
+            rank, cards_counted = evaluate_hand([card_ui.card for card_ui in self.cards_selected])
+            self.cards_to_count = cards_counted
+            return rank
         else:
             return None
 
@@ -161,7 +164,7 @@ class PokerScreen:
         if self.play_button.is_clicked(event):
             hand_rank = self.calc_poker_hand()
             player.poker_hand = hand_rank
-            player.chips = chip_counter(self.cards_selected)
+            player.chips = chip_counter(self.cards_to_count)
 
             if len(self.cards_selected) > 0:
                 self.discard(game, self.cards_displayed)
@@ -203,7 +206,7 @@ class PokerScreen:
             curr_poker_hand = "No Cards Selected"
 
 
-        chips = chip_counter(self.cards_selected)
+        chips = chip_counter(self.cards_to_count)
         
         draw_bottom_pannel(screen, self.hud_font, game, curr_poker_hand, chips)
 

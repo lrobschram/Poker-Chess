@@ -1,7 +1,5 @@
 from Deck import Deck
 from Hand import Hand
-import MovementRules
-import AttackRules
 
 class Player:
     MAX_MOVES = 3
