@@ -65,7 +65,7 @@ PIECE_STATS = {
         "attack": 2,
         "movement": 1,
         "range": 3,  # +2 range
-        "movement_rule": "king",
+        "movement_rule": "any",
         "promotes_to": None
     },
 
@@ -73,10 +73,10 @@ PIECE_STATS = {
     PieceType.HEALER: {
         "health": 5,
         "heal": 2,
-        "attack": 2,  
-        "movement": 2,
+        "attack": 1,  
+        "movement": 1,
         "range": 1,
-        "movement_rule": "any",
+        "movement_rule": "king",
         "promotes_to": None
     },
 
@@ -85,7 +85,7 @@ PIECE_STATS = {
         "health": 5,
         "heal": 0,
         "attack": 3,
-        "movement": 4,
+        "movement": 3,
         "range": 1,
         "movement_rule": "wolf",
         "promotes_to": None
@@ -153,7 +153,7 @@ class Piece:
 
         stats = PIECE_STATS[self.type]
         self.max_health = stats["health"]
-        self.health = stats["health"]
+        self.health = self.max_health
         self.attack = stats["attack"]
         self.movement = stats["movement"]
         self.range = stats["range"]
@@ -189,7 +189,6 @@ class Piece:
             self.type = self.promotes_to
             self.apply_stats()
     
-    
     def take_heal(self, amount):
     
         if self.health >= self.max_health:
@@ -197,8 +196,16 @@ class Piece:
         self.health = min(self.max_health, self.health + amount)
         return True
     
+    def addBonusHealth(self):
+        self.max_health += 1
+        self.health += 1
+        return self.max_health
+    
+    def addBonusDamage(self):
+        self.attack += 1
+        return self.attack
+    
     def perform_action(self, target):
-        
         if target is None:
             return False
 

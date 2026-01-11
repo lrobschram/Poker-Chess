@@ -23,6 +23,28 @@ def is_straight(ranks):
 
     return ranks == list(range(ranks[0], ranks[0] + 5))
 
+def chip_counter(cards):
+    ranks = [card_ui.card.rank.value for card_ui in cards]
+    chip_counter = 0;
+    for rank in ranks:
+        chip_counter += rank
+
+    return chip_counter
+
+def add_bonus (chips):
+    noBonus = "commonUnit"
+    smallBonus = "healthyUnit"
+    mediumBonus = "strongUnit"
+    largeBonus = "royalUnit"
+
+    if(chips < 40):
+        return noBonus
+    elif (chips < 50 ):
+         return smallBonus
+    elif(chips < 60):
+        return mediumBonus
+    else: return largeBonus
+
 
 def evaluate_hand(cards):
     n = len(cards)

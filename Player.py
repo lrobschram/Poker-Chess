@@ -15,6 +15,7 @@ class Player:
         self.start_turn()
         self.my_pieces = []
         self.poker_hand = None
+        self.chips = 0
 
     def start_turn(self):
         self.movements_left = self.MAX_MOVES

@@ -1,8 +1,10 @@
 import pygame
 from Screens import Screen
 from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights, draw_pieces, get_square_from_mouse
-from HandEvaluator import HandRank
+from HandEvaluator import HandRank, add_bonus, chip_counter
 from Pieces import Piece, PieceType
+
+
 
 
 HAND_TO_PIECE = {
@@ -21,6 +23,19 @@ def calc_piece(hand_rank, player):
 
     piece_type = HAND_TO_PIECE.get(hand_rank)
     return Piece(piece_type, player.color)
+
+def add_bonus_piece(piece, pieceBonus):
+    if(pieceBonus == "commonUnit"):
+        piece.addBonusHealth()
+    elif(pieceBonus == "strongUnit"):
+        piece.addBonusDamage()
+    elif(pieceBonus == "royalUnit"):
+        piece.addBonusDamage()
+        piece.addBonusHealth()
+    else: return 
+    
+
+
 
 def draw_panel(screen, font, game, piece, x0, w, h):
     # panel background
@@ -72,11 +87,13 @@ class PlacementScreen:
         
         if event.type == pygame.MOUSEBUTTONDOWN:
 
+
             sq = get_square_from_mouse(event.pos, 0, 0)
 
             if sq in self.pos_spaces:
                 game.board.place_piece(self.curr_piece, sq)
                 player.my_pieces.append(self.curr_piece)
+
                 return Screen.MOVEMENT
 
         
@@ -117,6 +134,11 @@ class PlacementScreen:
         if player.poker_hand != None:
             piece = calc_piece(player.poker_hand, player)
             self.curr_piece = piece
+            
+            #calculate chips and add bonus 
+            pieceBonusType = add_bonus(player.chips)
+            add_bonus_piece(piece, pieceBonusType)
+            
 
             if player.color == "Black":
                 rows = [0, 1]
@@ -133,4 +155,5 @@ class PlacementScreen:
 
     def on_exit(self, screen, game):
         self.curr_piece = None
+        game.get_current_player().chips = 0
         return None

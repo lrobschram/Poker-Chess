@@ -2,7 +2,7 @@ import pygame
 from Screens import Screen
 from ui import Button, Card_ui
 from Deck import Deck
-from HandEvaluator import evaluate_hand
+from HandEvaluator import evaluate_hand, chip_counter
 from Card import Rank, Suit
 
 
@@ -29,7 +29,8 @@ def refill_to_six(player):
         player.hand.add_cards(new_cards)
 
 
-def draw_bottom_pannel(screen, font, game, hand_rank):
+def draw_bottom_pannel(screen, font, game, hand_rank, chips):
+    
     bottom_y = 350
     bottom = pygame.Rect(0, bottom_y, screen.get_width(), screen.get_height() - bottom_y)
     pygame.draw.rect(screen, (255,255,255), bottom)
@@ -49,6 +50,9 @@ def draw_bottom_pannel(screen, font, game, hand_rank):
 
     rank_text = font.render(f"Current selected poker hand: {hand_rank}", True, (0, 0, 0))
     screen.blit(rank_text, (bottom.x + 35, bottom.y + 100))
+
+    chip_text = font.render(f"Chip Count: {chips}", True, (0, 0, 0))
+    screen.blit(chip_text, (bottom.x + 375 , bottom.y + 100))
 
 
 class PokerScreen:
@@ -157,6 +161,7 @@ class PokerScreen:
         if self.play_button.is_clicked(event):
             hand_rank = self.calc_poker_hand()
             player.poker_hand = hand_rank
+            player.chips = chip_counter(self.cards_selected)
 
             if len(self.cards_selected) > 0:
                 self.discard(game, self.cards_displayed)
@@ -196,8 +201,11 @@ class PokerScreen:
             curr_poker_hand = hand_rank.name.replace("_", " ").title()
         else:
             curr_poker_hand = "No Cards Selected"
+
+
+        chips = chip_counter(self.cards_selected)
         
-        draw_bottom_pannel(screen, self.hud_font, game, curr_poker_hand)
+        draw_bottom_pannel(screen, self.hud_font, game, curr_poker_hand, chips)
 
         # grey out the discard button when none selected or out of discards
         if player.can_discard() and len(self.cards_selected) > 0:
