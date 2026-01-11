@@ -90,32 +90,39 @@ class PokerScreen:
 
 
     def toggle_card(self, card_ui):
-        if card_ui in self.cards_selected:
-            # deselect
-            self.cards_selected.remove(card_ui)
+        card = card_ui.card
+
+        if card in self.cards_selected:
+            self.cards_selected.remove(card)
             card_ui.move_to_y(self.base_y)
         else:
-            # select (only if room)
             if len(self.cards_selected) >= 5:
                 return
-            self.cards_selected.append(card_ui)
+            self.cards_selected.append(card)
             card_ui.move_to_y(self.selected_y)
 
 
     def display_cards(self, game):
         player = game.get_current_player()
+
+        # remember which Cards were selected
+        selected_cards = set(self.cards_selected)
+
         self.cards_displayed = []
-        self.cards_selected = []  # reset selection when re-displaying
 
         if self.sort == Rank:
             player.hand.sort_by_rank()
         else:
             player.hand.sort_by_suit()
 
-        # grabs curr hand and creats ui elements for them 100px apart
         card_offset = 0
-        for card in game.get_current_player().hand.cards:
-            ui_card = Card_ui((90 + card_offset, 150), card, self.font)
+        for card in player.hand.cards:
+            ui_card = Card_ui((90 + card_offset, self.base_y), card, self.font)
+
+            # re-apply selection
+            if card in selected_cards:
+                ui_card.move_to_y(self.selected_y)
+
             self.cards_displayed.append(ui_card)
             card_offset += 100
 
@@ -125,10 +132,11 @@ class PokerScreen:
         indicies_to_dis = []
 
         # takes indicies of selected cards and discards them
-        for card_ui in card_ui_list:
-            indicies_to_dis.append(player.hand.cards.index(card_ui.card))
+        for card in self.cards_selected:
+            indicies_to_dis.append(player.hand.cards.index(card))
 
         player.hand.discard(indicies_to_dis)
+        self.cards_selected = []
         refill_to_six(player)
 
         self.display_cards(game)
@@ -136,7 +144,7 @@ class PokerScreen:
 
     def calc_poker_hand(self):
         if (len(self.cards_selected) > 0):
-            rank, cards_counted = evaluate_hand([card_ui.card for card_ui in self.cards_selected])
+            rank, cards_counted = evaluate_hand(self.cards_selected)
             self.cards_to_count = cards_counted
             return rank
         else:
