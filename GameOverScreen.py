@@ -1,19 +1,29 @@
 import pygame
+from Screens import Screen
 
 
-class PokerScreen:
+class GameOverScreen:
     def __init__(self):
-        self.font = pygame.font.SysFont("dejavusans", 35)
+        self.font = pygame.font.SysFont("helvetica", 35)
 
 
     def handle_event(self, event, game):
-        return None
+        return Screen.GAME_OVER
     
 
     def draw(self, screen, game):
         screen.fill((100, 100, 100))
-        text = self.font.render(f"GAME OVER", True, (0, 0, 0))
-        screen.blit(text, (250, 250))
+
+        lines = [
+            f"GAME OVER",
+            f"{game.winner} wins!"
+        ]
+
+        y = 250
+        for line in lines:
+            text = self.font.render(line, True, (0, 0, 0))
+            screen.blit(text, (250, y))
+            y += 50
 
 
     def on_enter(self, screen, game):

@@ -10,6 +10,7 @@ class Game:
         }
         self.current_player_color = "White"
         self.board.setup_initial_game(self.players["White"], self.players["Black"])
+        self.winner = None
         
     def get_current_player(self):
         return self.players[self.current_player_color]
@@ -24,8 +25,7 @@ class Game:
         # Check both players' kings
         for color in ["White", "Black"]:
             if self.board.is_king_dead(color):
-                winner = "Black" if color == "White" else "White"
-                print(f"{color} King is dead! {winner} wins!")
+                self.winner = "Black" if color == "White" else "White"
                 return True
         return False
     

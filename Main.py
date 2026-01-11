@@ -5,6 +5,8 @@ from MovementScreen import MovementScreen
 from PokerScreen import PokerScreen
 from PlacementScreen import PlacementScreen
 from AttackScreen import AttackScreen
+from GameOverScreen import GameOverScreen
+from StartScreen import StartScreen
 
 pygame.init()
 
@@ -20,9 +22,11 @@ screens = {
     Screen.PLACEMENT: PlacementScreen(),
     Screen.MOVEMENT: MovementScreen(),
     Screen.ATTACK: AttackScreen(),
+    Screen.GAME_OVER: GameOverScreen(),
+    Screen.START: StartScreen()
 }
 
-curr_phase = Screen.POKER
+curr_phase = Screen.START
 curr_screen = screens[curr_phase]
 
 curr_screen.on_enter(screen, game)  # initial poker set up

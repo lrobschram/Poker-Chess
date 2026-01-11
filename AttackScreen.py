@@ -59,6 +59,9 @@ class AttackScreen:
             if square:
                 self.handle_board_click(game, *square)
 
+        if game.is_game_over():
+            return Screen.GAME_OVER
+
         if not game.get_current_player().can_attack():
             return Screen.POKER
         return Screen.ATTACK
@@ -85,8 +88,6 @@ class AttackScreen:
                     # Attack
                     target_piece.take_damage(self.selected_attacker.attack)
                     if target_piece.is_piece_dead():
-                        if target_piece.type == PieceType.KING:
-                            game.game_over(self.selected_attacker.owner)
                         board.remove_piece(target_piece)
 
                 # Mark attacker as used
@@ -125,11 +126,6 @@ class AttackScreen:
         defender = game.board.grid[row][col]
 
         defender.take_damage(attacker.attack)
-
-        if defender.is_piece_dead():
-            if defender.type == PieceType.KING:
-                game.game_over(attacker.owner)
-            game.board.remove_piece(defender)
 
         # Mark attacker as used
         self.used_attackers.add(attacker)
