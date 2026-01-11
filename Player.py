@@ -6,12 +6,12 @@ import AttackRules
 class Player:
     MAX_MOVES = 3
     MAX_ATTACKS = 2
-    MAX_DISCARDS = 2
+    MAX_DISCARDS = 3
 
     def __init__(self, color):
         self.color = color
         self.deck = Deck()
-        self.hand = Hand(self.deck.draw(7))
+        self.hand = Hand(self.deck.draw(6))
         self.start_turn()
         self.my_pieces = []
         self.poker_hand = None

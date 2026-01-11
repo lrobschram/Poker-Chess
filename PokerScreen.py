@@ -13,10 +13,10 @@ def refill_deck(player):
     player.deck.remove_cards(player.hand.cards)
 
 
-def refill_to_seven(player):
+def refill_to_six(player):
 
-    if (player.hand.size() < 7):
-        amt_needed = 7 - player.hand.size()
+    if (player.hand.size() < 6):
+        amt_needed = 6 - player.hand.size()
 
         try:
             new_cards = player.deck.draw(amt_needed)
@@ -110,7 +110,7 @@ class PokerScreen:
         # grabs curr hand and creats ui elements for them 100px apart
         card_offset = 0
         for card in game.get_current_player().hand.cards:
-            ui_card = Card_ui((30 + card_offset, 150), card, self.font)
+            ui_card = Card_ui((90 + card_offset, 150), card, self.font)
             self.cards_displayed.append(ui_card)
             card_offset += 100
 
@@ -124,7 +124,7 @@ class PokerScreen:
             indicies_to_dis.append(player.hand.cards.index(card_ui.card))
 
         player.hand.discard(indicies_to_dis)
-        refill_to_seven(player)
+        refill_to_six(player)
 
         self.display_cards(game)
 
@@ -228,7 +228,7 @@ class PokerScreen:
     def on_enter(self, screen, game):
         player = game.get_current_player()
         player.start_turn()
-        refill_to_seven(player)
+        refill_to_six(player)
         self.display_cards(game)
     
 
