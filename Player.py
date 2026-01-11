@@ -5,7 +5,7 @@ import AttackRules
 
 class Player:
     MAX_MOVES = 3
-    MAX_ATTACKS = 2
+    MAX_ATTACKS = 3
     MAX_DISCARDS = 2
 
     def __init__(self, color):
@@ -15,6 +15,7 @@ class Player:
         self.start_turn()
         self.my_pieces = []
         self.poker_hand = None
+        self.chips = 0
 
     def start_turn(self):
         self.movements_left = self.MAX_MOVES
