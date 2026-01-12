@@ -82,7 +82,7 @@ class PokerScreen:
             )
         self.sort = Rank
         self.sort_button = Button(
-            rect=(100, 500, 160, 40), 
+            rect=(580, 30, 160, 40), 
             text="Play Hand",
             font=self.hud_font,
             bg_color=self.button_enabled_color

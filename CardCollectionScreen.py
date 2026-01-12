@@ -27,18 +27,19 @@ class CardCollectionScreen:
 
         x_offset = 0
         y_offset = 0
-        card_count = 0
+        curr_suit = player.deck.cards[0].suit
+
         for card in player.deck.cards:
 
-            ui_card = Card_ui((20 + x_offset, 90 + y_offset), self.card_size, card, self.hud_font)
-
-            self.cards_displayed.append(ui_card)
-            x_offset += 60
-            card_count += 1
-
-            if card_count % 12 == 0:
+            if card.suit != curr_suit:
                 x_offset = 0
                 y_offset += 105
+                curr_suit = card.suit
+
+            ui_card = Card_ui((10 + x_offset, 90 + y_offset), self.card_size, card, self.hud_font)
+
+            self.cards_displayed.append(ui_card)
+            x_offset += 55
 
     def handle_event(self, event, game):
 
