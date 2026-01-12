@@ -2,14 +2,14 @@ from Deck import Deck
 from Hand import Hand
 
 class Player:
-    MAX_MOVES = 3
-    MAX_ATTACKS = 2
-    MAX_DISCARDS = 3
+    MAX_MOVES = 4
+    MAX_ATTACKS = 3
+    MAX_DISCARDS = 1
 
     def __init__(self, color):
         self.color = color
         self.deck = Deck()
-        self.hand = Hand(self.deck.draw(6))
+        self.hand = Hand(self.deck.draw(7))
         self.start_turn()
         self.my_pieces = []
         self.poker_hand = None

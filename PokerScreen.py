@@ -13,10 +13,10 @@ def refill_deck(player):
     player.deck.remove_cards(player.hand.cards)
 
 
-def refill_to_six(player):
+def refill_to_seven(player):
 
-    if (player.hand.size() < 6):
-        amt_needed = 6 - player.hand.size()
+    if (player.hand.size() < 7):
+        amt_needed = 7 - player.hand.size()
 
         try:
             new_cards = player.deck.draw(amt_needed)
@@ -117,7 +117,7 @@ class PokerScreen:
 
         card_offset = 0
         for card in player.hand.cards:
-            ui_card = Card_ui((90 + card_offset, self.base_y), card, self.font)
+            ui_card = Card_ui((45 + card_offset, self.base_y), card, self.font)
 
             # re-apply selection
             if card in selected_cards:
@@ -137,7 +137,7 @@ class PokerScreen:
 
         player.hand.discard(indicies_to_dis)
         self.cards_selected = []
-        refill_to_six(player)
+        refill_to_seven(player)
 
         self.display_cards(game)
 
@@ -213,11 +213,8 @@ class PokerScreen:
         else:
             curr_poker_hand = "No Cards Selected"
 
-
         chips = chip_counter(self.cards_to_count)
         
-        draw_bottom_pannel(screen, self.hud_font, game, curr_poker_hand, chips)
-
         # grey out the discard button when none selected or out of discards
         if player.can_discard() and len(self.cards_selected) > 0:
             self.discard_button.bg_color = self.button_enabled_color
@@ -228,8 +225,10 @@ class PokerScreen:
         if len(self.cards_selected) > 0:
             self.play_button.text = "Play"
         else:
+            chips = 0
             self.play_button.text = "Skip"
 
+        draw_bottom_pannel(screen, self.hud_font, game, curr_poker_hand, chips)
         self.discard_button.draw(screen)
         self.play_button.draw(screen)
 
@@ -247,7 +246,7 @@ class PokerScreen:
     def on_enter(self, screen, game):
         player = game.get_current_player()
         player.start_turn()
-        refill_to_six(player)
+        refill_to_seven(player)
         self.display_cards(game)
     
 
