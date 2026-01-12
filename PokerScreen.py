@@ -168,6 +168,9 @@ class PokerScreen:
     def handle_event(self, event, game):
 
         player = game.get_current_player()
+
+        if self.full_deck_button.is_clicked(event):
+            return Screen.CARD_COLLECTION
         
         # discard curr selected cards + use discard when discard button clicked 
         if self.discard_button.is_clicked(event):

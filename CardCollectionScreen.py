@@ -9,15 +9,19 @@ class CardCollectionScreen:
     def __init__(self):
         self.font = pygame.font.SysFont("dejavusans", 35)
         self.hud_font = pygame.font.SysFont("dejavusans", 18)
-        self.card_size = (40, 75)
+        self.card_size = (40, 60)
         self.back_button = Button(
-            rect=(50, 100, 160, 40),  
+            rect=(20, 30, 160, 40),  
             text="Back",
             font=self.hud_font,
             bg_color=(200, 200, 200)
             )
 
     def handle_event(self, event, game):
+
+        if self.back_button.is_clicked(event):
+            return Screen.POKER
+
         return Screen.CARD_COLLECTION
     
     def draw(self, screen, game):
