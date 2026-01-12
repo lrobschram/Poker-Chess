@@ -132,8 +132,8 @@ class Button:
         )
     
 class Card_ui:
-    def __init__(self, pos, card_object, font):
-        self.rect = pygame.Rect(pos[0], pos[1], 80, 120)
+    def __init__(self, pos, size, card_object, font):
+        self.rect = pygame.Rect(pos[0], pos[1], size[0], size[1])
         self.card_object = card_object
         self.font = font
         self.card = card_object

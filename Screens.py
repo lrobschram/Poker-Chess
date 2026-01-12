@@ -7,3 +7,4 @@ class Screen(Enum):
     ATTACK = auto()
     GAME_OVER = auto()
     START = auto()
+    CARD_COLLECTION = auto()

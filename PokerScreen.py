@@ -65,6 +65,7 @@ class PokerScreen:
         self.cards_displayed = []
         self.base_y = 150
         self.selected_y = 110
+        self.card_size = (80, 120)
         self.button_enabled_color = (200, 200, 200)
         self.button_disabled_color = (150, 150, 150)
         self.discard_button = Button(
@@ -87,6 +88,12 @@ class PokerScreen:
             bg_color=self.button_enabled_color
             )
         self.cards_to_count = []
+        self.full_deck_button = Button(
+            rect=(20, 30, 160, 40),  
+            text="Cards left in deck",
+            font=self.hud_font,
+            bg_color=(200, 200, 200)
+            )
 
 
     def toggle_card(self, card_ui):
@@ -117,7 +124,7 @@ class PokerScreen:
 
         card_offset = 0
         for card in player.hand.cards:
-            ui_card = Card_ui((90 + card_offset, self.base_y), card, self.font)
+            ui_card = Card_ui((90 + card_offset, self.base_y), self.card_size, card, self.font)
 
             # re-apply selection
             if card in selected_cards:
@@ -239,6 +246,8 @@ class PokerScreen:
             self.sort_button.text = "Sort by Rank"
 
         self.sort_button.draw(screen)
+
+        self.full_deck_button.draw(screen)
 
         for card_ui in self.cards_displayed:
             card_ui.draw(screen)
