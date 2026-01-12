@@ -35,4 +35,5 @@ class StartScreen:
     
 
     def on_exit(self, screen, game):
-        return None
+        player = game.get_current_player()
+        player.start_turn()

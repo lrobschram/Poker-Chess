@@ -259,7 +259,6 @@ class PokerScreen:
 
     def on_enter(self, screen, game):
         player = game.get_current_player()
-        player.start_turn()
         refill_to_seven(player)
         self.display_cards(game)
     
