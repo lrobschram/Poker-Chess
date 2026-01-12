@@ -154,7 +154,7 @@ class Piece:
 
         stats = PIECE_STATS[self.type]
         self.max_health = stats["health"]
-        self.health = self.max_health
+        self.health = stats["health"]
         self.attack = stats["attack"]
         self.movement = stats["movement"]
         self.range = stats["range"]

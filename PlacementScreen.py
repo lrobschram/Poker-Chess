@@ -25,7 +25,10 @@ def calc_piece(hand_rank, player):
     return Piece(piece_type, player.color)
 
 def add_bonus_piece(piece, pieceBonus):
-    if(pieceBonus == "commonUnit"):
+    if(pieceBonus == "noBonus"):
+        return
+    
+    if(pieceBonus == "healthyUnit"):
         piece.addBonusHealth()
     elif(pieceBonus == "strongUnit"):
         piece.addBonusDamage()

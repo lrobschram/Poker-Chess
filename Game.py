@@ -15,6 +15,12 @@ class Game:
     def get_current_player(self):
         return self.players[self.current_player_color]
     
+    def get_next_player(self):
+
+        if(self.players[self.current_player_color] == "White"):
+            return self.players["Black"]
+        else: return self.players["White"]
+    
     def switch_player(self):
         self.current_player_color = "Black" if self.current_player_color == "White" else "White"
 
