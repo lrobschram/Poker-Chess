@@ -8,19 +8,38 @@ from Pieces import PieceType
 
 # -------------------- Utility Functions --------------------
 
-def draw_panel(screen, font, game, x0, w, h, phase="Attack", attacks_left=0):
+def draw_panel(screen, font, game, x0, w, h, phase="Attack", attacks_left=0, exiting=False):
     pygame.draw.rect(screen, (255, 220, 220), pygame.Rect(x0, 0, w, h))
     player = game.get_current_player()
+    y = 20
+
+    if exiting:
+        # only change when exiting
+        next_player = game.get_next_player()
+        
+        lines = [
+             f"Player: {player.color}",
+             f"Turn Ending...",
+             f"next player: {next_player.color}"
+    ]
+
+        for line in lines:
+            text = font.render(line, True, (0, 0, 0))
+            screen.blit(text, (x0 + 15, y))
+            y += 35
+        return
+    
     lines = [
         f"Phase: {phase}",
         f"Player: {player.color}",
         f"Attacks left: {attacks_left}"
     ]
-    y = 20
+
     for line in lines:
         text = font.render(line, True, (0, 0, 0))
         screen.blit(text, (x0 + 15, y))
         y += 35
+    
 
 # -------------------- AttackScreen Class --------------------
 
@@ -40,6 +59,12 @@ class AttackScreen:
         self.error_start_time = 0
         self.ERROR_DURATION = 500  # milliseconds
 
+        #exit vatiables
+        self.exiting = False
+        self.exit_start_time = 0
+        self.EXIT_DELAY = 3000  # milliseconds
+
+
         self.skip_button = Button(
             rect=(COLS*TILE + 20, 200, 160, 40),
             text="Skip Attack",
@@ -48,11 +73,26 @@ class AttackScreen:
         )
         self.last_clicked = None
 
+
+    #--------------------- Start exit time -------------------
+
+    def start_exit(self):
+        if not self.exiting:
+         self.exiting = True
+         self.exit_start_time = pygame.time.get_ticks()
+
     # -------------------- Event Handling --------------------
 
     def handle_event(self, event, game):
+
+        if self.exiting:
+            now = pygame.time.get_ticks()
+            if now - self.exit_start_time >= self.EXIT_DELAY:
+                return Screen.POKER
+            return Screen.ATTACK
+        
         if self.skip_button.is_clicked(event):
-            return Screen.POKER
+            self.start_exit()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             square = get_square_from_mouse(pygame.mouse.get_pos())
@@ -63,7 +103,9 @@ class AttackScreen:
             return Screen.GAME_OVER
 
         if not game.get_current_player().can_attack():
-            return Screen.POKER
+            self.start_exit()
+            
+        
         return Screen.ATTACK
 
     # -------------------- Board Click Logic --------------------
@@ -180,7 +222,7 @@ class AttackScreen:
         if self.error:
             draw_error(screen, self.err_loc, board_x, board_y)
 
-        draw_panel(screen, self.hud_font, game, panel_x, panel_w, panel_h, phase="ATTACK", attacks_left= game.get_current_player().attacks_left)
+        draw_panel(screen, self.hud_font, game, panel_x, panel_w, panel_h, phase="ATTACK", attacks_left= game.get_current_player().attacks_left, exiting= self.exiting)
         self.skip_button.draw(screen)
 
         if self.last_clicked != None:
@@ -193,9 +235,11 @@ class AttackScreen:
         self.selected_attacker = None
         self.valid_targets = []
         self.error = False
+        self.exiting = False
         game.get_current_player().start_turn()
 
     def on_exit(self, screen, game):
+        
         game.switch_player()
         return None
 

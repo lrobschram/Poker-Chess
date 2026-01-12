@@ -125,7 +125,7 @@ class PokerScreen:
         card_offset = 0
         for card in player.hand.cards:
 
-            ui_card = Card_ui((90 + card_offset, self.base_y), self.card_size, card, self.font)
+            ui_card = Card_ui((50 + card_offset, self.base_y), self.card_size, card, self.font)
 
 
             # re-apply selection
