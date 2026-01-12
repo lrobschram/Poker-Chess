@@ -7,6 +7,7 @@ from PlacementScreen import PlacementScreen
 from AttackScreen import AttackScreen
 from GameOverScreen import GameOverScreen
 from StartScreen import StartScreen
+from CardCollectionScreen import CardCollectionScreen
 
 pygame.init()
 
@@ -23,7 +24,8 @@ screens = {
     Screen.MOVEMENT: MovementScreen(),
     Screen.ATTACK: AttackScreen(),
     Screen.GAME_OVER: GameOverScreen(),
-    Screen.START: StartScreen()
+    Screen.START: StartScreen(),
+    Screen.CARD_COLLECTION: CardCollectionScreen(),
 }
 
 curr_phase = Screen.START

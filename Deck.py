@@ -36,5 +36,8 @@ class Deck:
     def remove_cards(self, cards):
         for card in cards:
             self.remove_card(card)
+
+    def sort_by_suit(self):
+        self.cards.sort(key=lambda card: (card.suit.value, card.rank.value), reverse=True)
     
 
