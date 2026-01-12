@@ -97,7 +97,7 @@ def evaluate_hand(cards):
     # --- 5-card structure hands ---
     if n == 5:
         flush = len(set(suits)) == 1
-        straight = is_straight(cards)
+        straight = is_straight([card.rank for card in cards])
 
         if straight and flush:
             return HandRank.STRAIGHT_FLUSH, cards
