@@ -1,5 +1,6 @@
 from Deck import Deck
 from Hand import Hand
+from BonusStats import BonusStats
 
 class Player:
     MAX_MOVES = 4
@@ -14,6 +15,7 @@ class Player:
         self.my_pieces = []
         self.poker_hand = None
         self.chips = 0
+        self.bonus_stats = BonusStats()
 
     def start_turn(self):
         self.movements_left = self.MAX_MOVES

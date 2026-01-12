@@ -188,6 +188,7 @@ class PokerScreen:
 
             if len(self.cards_selected) > 0:
                 self.discard(game, self.cards_displayed)
+                player.bonus_stats.record_play(player.chips)
 
             return Screen.PLACEMENT
         
@@ -265,3 +266,6 @@ class PokerScreen:
 
     def on_exit(self, screen, game):
         return None
+
+    def update(self, screen, game):
+        return Screen.POKER

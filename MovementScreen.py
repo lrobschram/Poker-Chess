@@ -1,6 +1,6 @@
 import pygame
 from Screens import Screen
-from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights, draw_pieces, get_square_from_mouse, draw_stats
+from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights, draw_pieces, get_square_from_mouse, draw_stats, draw_borders
 
 
 def draw_panel(screen, font, game, x0, w, h):
@@ -12,6 +12,7 @@ def draw_panel(screen, font, game, x0, w, h):
         f"Phase: Movement",
         f"Player: {player.color}",
         f"Moves left: {player.movements_left}", 
+        f"Avg Bonus: {player.bonus_stats.avg_played():.2f}"
     ]
 
     y = 20
@@ -106,6 +107,7 @@ class MovementScreen:
                     self.last_clicked = game.board.get_piece((row, col))
 
                 self.selected = False
+                self.curr_piece = None
                 self.pos_moves = []
 
         if (not game.get_current_player().can_move()):
@@ -133,6 +135,10 @@ class MovementScreen:
 
         screen.fill((240, 240, 240))
         draw_board(screen, board_x, board_y)
+
+        if self.curr_piece != None:
+            draw_borders(screen, self.curr_piece, (0, 100, 255), board_x, board_y)
+
         draw_highlights(screen, self.pos_moves, (255, 200, 0), board_x, board_y)
 
         # Red overlay for pieces that already attacked
@@ -151,8 +157,7 @@ class MovementScreen:
 
         if self.last_clicked != None:
             draw_stats(screen, self.hud_font, self.last_clicked, panel_x)
-            
-            
+               
 
     """
         Sets up the Movement phase on entering
@@ -166,3 +171,6 @@ class MovementScreen:
     def on_exit(self, screen, game):
         self.last_clicked = None
         return None
+    
+    def update(self, screen, game):
+        return Screen.MOVEMENT

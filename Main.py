@@ -28,6 +28,8 @@ screens = {
     Screen.CARD_COLLECTION: CardCollectionScreen(),
 }
 
+clock = pygame.time.Clock()
+
 curr_phase = Screen.START
 curr_screen = screens[curr_phase]
 
@@ -36,23 +38,38 @@ curr_screen.on_enter(screen, game)  # initial poker set up
 running = True
 while running:
 
-    # send screen events from the player
+    new_phase = curr_phase  # default: stay here
+
+    # 1) handle input events
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
             break
 
         new_phase = curr_screen.handle_event(event, game)
-
-        # change screens when switching to a new phase
         if new_phase != curr_phase:
-            
-            curr_screen.on_exit(screen, game) # clean up screen before switching
-            curr_phase = new_phase
-            curr_screen = screens[curr_phase]
-            curr_screen.on_enter(screen, game) # set up new screen just switched to
+            break  # stop processing events; we’re switching
 
+    if not running:
+        break
+
+    # 2) update screen logic EVERY FRAME (timers, animations, etc.)
+    update_phase = curr_screen.update(screen, game)
+
+    # if update wants a phase change, honor it
+    if update_phase != curr_phase:
+        new_phase = update_phase
+
+    # 3) switch screens if needed
+    if new_phase != curr_phase:
+        curr_screen.on_exit(screen, game)
+        curr_phase = new_phase
+        curr_screen = screens[curr_phase]
+        curr_screen.on_enter(screen, game)
+
+    # 4) draw
     curr_screen.draw(screen, game)
     pygame.display.flip()
+    clock.tick(60)
 
 pygame.quit()

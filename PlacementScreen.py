@@ -1,6 +1,6 @@
 import pygame
 from Screens import Screen
-from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights, draw_pieces, get_square_from_mouse
+from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights, draw_pieces, get_square_from_mouse, pretty_bonus
 from HandEvaluator import HandRank, add_bonus, chip_counter
 from Pieces import Piece, PieceType
 
@@ -48,7 +48,7 @@ def draw_panel(screen, font, game, piece, x0, w, h):
 
     if piece != None:
         piece_text = piece.type.name.replace("_", " ").title()
-        bonus_text = f"{piece.bonus}"
+        bonus_text = f"{pretty_bonus(piece.bonus)}"
     else:
         piece_text = "Skipped"
         bonus_text = None
@@ -165,3 +165,6 @@ class PlacementScreen:
         self.curr_piece = None
         game.get_current_player().chips = 0
         return None
+
+    def update(self, screen, game):
+        return Screen.PLACEMENT

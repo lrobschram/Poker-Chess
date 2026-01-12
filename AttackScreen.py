@@ -84,12 +84,6 @@ class AttackScreen:
     # -------------------- Event Handling --------------------
 
     def handle_event(self, event, game):
-
-        if self.exiting:
-            now = pygame.time.get_ticks()
-            if now - self.exit_start_time >= self.EXIT_DELAY:
-                return Screen.POKER
-            return Screen.ATTACK
         
         if self.skip_button.is_clicked(event):
             self.start_exit()
@@ -236,7 +230,6 @@ class AttackScreen:
         self.valid_targets = []
         self.error = False
         self.exiting = False
-        game.get_current_player().start_turn()
 
     def on_exit(self, screen, game):
         
@@ -249,3 +242,12 @@ class AttackScreen:
         self.error = True
         self.err_loc = pos
         self.error_start_time = pygame.time.get_ticks()
+
+    # -------------------- Updating --------------------
+
+    def update(self, screen, game):
+        if self.exiting:
+            now = pygame.time.get_ticks()
+            if now - self.exit_start_time >= self.EXIT_DELAY:
+                return Screen.POKER
+        return Screen.ATTACK

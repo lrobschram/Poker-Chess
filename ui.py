@@ -1,5 +1,6 @@
 import pygame
 from Card import Suit
+import re
 
 ROWS, COLS = 8, 8
 TILE = 70
@@ -58,15 +59,19 @@ def draw_error(screen, pos, x0=0, y0=0):
     rect = pygame.Rect(x0 + pos[1]*TILE, y0 + pos[0]*TILE, TILE, TILE)
     pygame.draw.rect(screen, (255, 0, 0), rect, 4)
 
+def pretty_bonus(bonus: str) -> str:
+    # "healthyUnit" -> "Healthy Unit"
+    return re.sub(r"([a-z])([A-Z])", r"\1 \2", bonus).title()
 
 def draw_stats(screen, font, piece, x0):
+    bonus_text = pretty_bonus(piece.bonus)
     lines = [
         f"Piece Clicked: ",
         f"{piece.type.name}",
         f"{piece.owner}",
         f"{piece.attack} att",
         f"{piece.health} hp",
-        f"{piece.bonus}"
+        f"{bonus_text}"
             ]
     
     y = 275

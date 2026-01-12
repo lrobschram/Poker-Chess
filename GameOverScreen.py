@@ -32,3 +32,6 @@ class GameOverScreen:
 
     def on_exit(self, screen, game):
         return None
+
+    def update(self, screen, game):
+        return Screen.GAME_OVER
