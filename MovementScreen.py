@@ -110,8 +110,6 @@ class MovementScreen:
                 self.curr_piece = None
                 self.pos_moves = []
 
-        if (not game.get_current_player().can_move()):
-            return Screen.ATTACK
         return Screen.MOVEMENT
 
     """
@@ -173,4 +171,8 @@ class MovementScreen:
         return None
     
     def update(self, screen, game):
+
+        if (not game.get_current_player().can_move()):
+            return Screen.ATTACK
+        
         return Screen.MOVEMENT

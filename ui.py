@@ -116,25 +116,86 @@ def draw_stats(screen, font, piece, x0):
     )
 
 class Button:
-    def __init__(self, rect, text, font, bg_color, text_color=(0,0,0)):
+    def __init__(self, rect, text, font, bg_color, text_color=(20,20,20), radius=10):
         self.rect = pygame.Rect(rect)
         self.text = text
         self.font = font
         self.bg_color = bg_color
         self.text_color = text_color
+        self.radius = radius
+
+        self.enabled = True
+        self._pressed = False
+
+        # optional: override these per-button if you want
+        self.hover_color = None
+        self.pressed_color = None
+        self.disabled_color = (110, 110, 110)
+        self.disabled_text_color = (170, 170, 170)
+
+    def _shade(self, color, amt):
+        # amt > 0 -> lighten, amt < 0 -> darken
+        r, g, b = color
+        def clamp(x): return max(0, min(255, x))
+        return (clamp(r + amt), clamp(g + amt), clamp(b + amt))
 
     def draw(self, screen):
-        pygame.draw.rect(screen, self.bg_color, self.rect, border_radius=6)
+        mouse = pygame.mouse.get_pos()
+        hovered = self.rect.collidepoint(mouse)
 
-        text_surf = self.font.render(self.text, True, self.text_color)
+        # pick current colors
+        if not self.enabled:
+            bg = self.disabled_color
+            fg = self.disabled_text_color
+        else:
+            bg = self.bg_color
+            fg = self.text_color
+            if self.pressed_color is None:
+                pressed_bg = self._shade(bg, -25)
+            else:
+                pressed_bg = self.pressed_color
+
+            if self.hover_color is None:
+                hover_bg = self._shade(bg, +12)
+            else:
+                hover_bg = self.hover_color
+
+            if self._pressed and hovered:
+                bg = pressed_bg
+            elif hovered:
+                bg = hover_bg
+
+        # subtle shadow
+        shadow = self.rect.move(0, 3)
+        pygame.draw.rect(screen, (0,0,0), shadow, border_radius=self.radius)
+
+        # button body
+        pygame.draw.rect(screen, bg, self.rect, border_radius=self.radius)
+
+        # border
+        border_col = (0,0,0) if self.enabled else (70,70,70)
+        pygame.draw.rect(screen, border_col, self.rect, 2, border_radius=self.radius)
+
+        # text (centered)
+        text_surf = self.font.render(self.text, True, fg)
         text_rect = text_surf.get_rect(center=self.rect.center)
         screen.blit(text_surf, text_rect)
 
     def is_clicked(self, event):
-        return (
-            event.type == pygame.MOUSEBUTTONDOWN
-            and self.rect.collidepoint(event.pos)
-        )
+        if not self.enabled:
+            return False
+
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.rect.collidepoint(event.pos):
+                self._pressed = True
+
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+            was_pressed = self._pressed
+            self._pressed = False
+            if was_pressed and self.rect.collidepoint(event.pos):
+                return True
+
+        return False
     
 class Card_ui:
     def __init__(self, pos, size, card_object, font):

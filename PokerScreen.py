@@ -6,6 +6,27 @@ from HandEvaluator import evaluate_hand, chip_counter
 from Card import Rank, Suit
 
 
+TABLE_GREEN = (35, 135, 100)   
+PANEL_BG    = (18, 65, 50)   
+TEXT_MAIN     = (225, 225, 220)
+TEXT_LIGHT  = (210, 210, 205)
+CARD_BG       = (55, 55, 55)
+TEXT_MUTED    = (170, 170, 170)
+ACCENT_GOLD   = (210, 180, 90)
+
+BTTN_PRIMARY = (210, 180, 90)     
+BTTN_PRIMARY_TEXT = (20, 20, 20)
+BTTN_SECONDARY = (200, 200, 200)
+BTTN_SECONDARY_TEXT = (25, 25, 25)
+
+BTN_W = 190
+BTN_H = 44
+BTN_GAP = 12
+
+RIGHT_PAD = 20
+STACK_Y = 290   # height area right above your bottom panel
+
+
 def refill_deck(player):
 
     # create a new deck object and remove the current cards in hand
@@ -29,30 +50,80 @@ def refill_to_seven(player):
         player.hand.add_cards(new_cards)
 
 
-def draw_bottom_pannel(screen, font, game, hand_rank, chips):
-    
+def draw_kv(screen, font, x, y, label, value, label_color, value_color):
+    # label on top, value below (nice UI hierarchy)
+    label_surf = font.render(label, True, label_color)
+    value_surf = font.render(value, True, value_color)
+    screen.blit(label_surf, (x, y))
+    screen.blit(value_surf, (x, y + 18))  # spacing depends on font size
+
+def draw_bottom_pannel(screen, font, game, hand_rank, chips, discard_btn, play_btn):
     bottom_y = 350
     bottom = pygame.Rect(0, bottom_y, screen.get_width(), screen.get_height() - bottom_y)
-    pygame.draw.rect(screen, (255,255,255), bottom)
+
+    pygame.draw.rect(screen, PANEL_BG, bottom)
+
+    pad = 18
+    card = pygame.Rect(bottom.x + pad, bottom.y + pad, bottom.width - 2*pad, bottom.height - 2*pad)
+    pygame.draw.rect(screen, CARD_BG, card, border_radius=12)
+    pygame.draw.rect(screen, (0, 0, 0), card, 2, border_radius=12)
+
+    accent = pygame.Rect(card.x, card.y, card.width, 5)
+    pygame.draw.rect(screen, ACCENT_GOLD, accent, border_radius=12)
 
     player = game.get_current_player()
-    lines = [
-        f"Phase: POKER",
-        f"Player: {player.color}",
-        f"Discards left: {player.discards_left}", 
-    ]
 
-    x = 35
-    for line in lines:
-        text = font.render(line, True, (0, 0, 0))
-        screen.blit(text, (bottom.x + x, bottom.y + 50))
-        x += 150
+    # ---------- Right-side button stack INSIDE the bottom panel ----------
+    BTN_W, BTN_H = 190, 44
+    BTN_GAP = 12
+    right_pad = 18
 
-    rank_text = font.render(f"Poker Hand: {hand_rank}", True, (0, 0, 0))
-    screen.blit(rank_text, (bottom.x + 35, bottom.y + 100))
+    stack_x = card.right - right_pad - BTN_W
+    # vertically center stack in the card
+    stack_total_h = BTN_H*2 + BTN_GAP
+    stack_y = card.y + (card.height - stack_total_h)//2
 
-    chip_text = font.render(f"Chip Count: {chips}", True, (0, 0, 0))
-    screen.blit(chip_text, (bottom.x + 375 , bottom.y + 100))
+    discard_btn.rect.topleft = (stack_x, stack_y)
+    play_btn.rect.topleft    = (stack_x, stack_y + BTN_H + BTN_GAP)
+
+    # divider between info area and buttons
+    divider_x = stack_x - 18
+    pygame.draw.line(screen, (80, 80, 80), (divider_x, card.y + 14), (divider_x, card.bottom - 14), 2)
+
+    # ---------- Left info area ----------
+    info_x = card.x + 18
+    info_w = divider_x - info_x - 18
+
+    # row 1: phase + player (since discards moved out)
+    draw_kv(screen, font, info_x, card.y + 18, "PHASE", "POKER", TEXT_MUTED, TEXT_MAIN)
+    draw_kv(screen, font, info_x + info_w//2, card.y + 18, "PLAYER", player.color, TEXT_MUTED, TEXT_MAIN)
+
+    # horizontal divider
+    pygame.draw.line(screen, (80, 80, 80), (card.x + 14, card.y + 62), (divider_x - 14, card.y + 62), 2)
+
+    # row 2: poker hand + chip count next to it
+    row2_y = card.y + 75
+    hand_label = font.render("POKER HAND", True, TEXT_MUTED)
+    screen.blit(hand_label, (info_x, row2_y))
+
+    hand_value = font.render(str(hand_rank), True, ACCENT_GOLD)
+    screen.blit(hand_value, (info_x, row2_y + 18))
+
+    # chips placed right of hand value
+    chip_x = info_x + info_w//2
+    chip_label = font.render("CHIPS", True, TEXT_MUTED)
+    screen.blit(chip_label, (chip_x, row2_y))
+
+    chip_value = font.render(str(chips), True, TEXT_MAIN)
+    screen.blit(chip_value, (chip_x, row2_y + 18))
+
+    # chip icon dot
+    pygame.draw.circle(screen, ACCENT_GOLD, (chip_x - 14, row2_y + 36), 6)
+    pygame.draw.circle(screen, (0, 0, 0), (chip_x - 14, row2_y + 36), 6, 2)
+
+    # finally draw buttons (so they appear on top)
+    discard_btn.draw(screen)
+    play_btn.draw(screen)
 
 
 class PokerScreen:
@@ -66,33 +137,42 @@ class PokerScreen:
         self.base_y = 150
         self.selected_y = 110
         self.card_size = (80, 120)
+        self.cards_to_count = []
+        self.sort = Rank
         self.button_enabled_color = (200, 200, 200)
         self.button_disabled_color = (150, 150, 150)
+
+        
         self.discard_button = Button(
-            rect=(550, 400, 160, 40),  
+            rect=(20, 290, 160, 40),  
             text="Discard Hand",
             font=self.hud_font,
             bg_color=self.button_enabled_color
             )
+        
         self.play_button = Button(
-            rect=(550, 460, 160, 40), 
+            rect=(555, 290, 160, 44),
             text="Play Hand",
             font=self.hud_font,
-            bg_color=self.button_enabled_color
+            bg_color=BTTN_PRIMARY,
+            text_color=BTTN_PRIMARY_TEXT,
+            radius=12
             )
-        self.sort = Rank
+
         self.sort_button = Button(
-            rect=(580, 30, 160, 40), 
+            rect=(555, 30, 190, 44), 
             text="Play Hand",
             font=self.hud_font,
-            bg_color=self.button_enabled_color
+            bg_color=self.button_enabled_color,
+            radius=12
             )
-        self.cards_to_count = []
+
         self.full_deck_button = Button(
-            rect=(20, 30, 160, 40),  
+            rect=(20, 30, 190, 44),  
             text="Cards left in deck",
             font=self.hud_font,
-            bg_color=(200, 200, 200)
+            bg_color=(200, 200, 200),
+            radius=12
             )
 
 
@@ -216,9 +296,12 @@ class PokerScreen:
         Creates a bottom pannel with player info and discard + play/skip buttons
     """
     def draw(self, screen, game):
-        screen.fill((100, 100, 100))
+        screen.fill(TABLE_GREEN)
 
         player = game.get_current_player()
+
+        info = self.hud_font.render(f"Discards Left: {player.discards_left}", True, TEXT_LIGHT)
+        screen.blit(info, (screen.get_width() - 20 - info.get_width(), 310))
 
         hand_rank = self.calc_poker_hand()
         if (hand_rank != None):
@@ -229,21 +312,24 @@ class PokerScreen:
         chips = chip_counter(self.cards_to_count)
         
         # grey out the discard button when none selected or out of discards
-        if player.can_discard() and len(self.cards_selected) > 0:
-            self.discard_button.bg_color = self.button_enabled_color
-        else:
-            self.discard_button.bg_color = self.button_disabled_color
+        self.discard_button.enabled = (player.can_discard() and len(self.cards_selected) > 0)
 
         # turn play into skip when no cards selected
         if len(self.cards_selected) > 0:
-            self.play_button.text = "Play"
+            self.play_button.text = "Play Hand"
         else:
             chips = 0
-            self.play_button.text = "Skip"
+            self.play_button.text = "Skip Hand"
 
-        draw_bottom_pannel(screen, self.hud_font, game, curr_poker_hand, chips)
-        self.discard_button.draw(screen)
-        self.play_button.draw(screen)
+        draw_bottom_pannel(
+            screen,
+            self.hud_font,
+            game,
+            curr_poker_hand,
+            chips,
+            self.discard_button,
+            self.play_button
+        )
 
         if self.sort == Rank:
             self.sort_button.text = "Sort by Suit"

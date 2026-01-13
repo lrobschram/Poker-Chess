@@ -5,6 +5,12 @@ from Deck import Deck
 from HandEvaluator import evaluate_hand, chip_counter
 from Card import Rank, Suit
 
+
+TABLE_GREEN = (35, 135, 100)   # main felt
+TEXT_LIGHT  = (210, 210, 205)
+BUTTON_BG   = (200, 200, 200)
+
+
 def get_color(suit):
         
     # Determine text color by suit
@@ -26,7 +32,7 @@ class CardCollectionScreen:
             rect=(20, 30, 160, 40),  
             text="Back",
             font=self.hud_font,
-            bg_color=(200, 200, 200)
+            bg_color=BUTTON_BG
             )
         
     def display_cards(self, game, screen):
@@ -74,11 +80,11 @@ class CardCollectionScreen:
         return Screen.CARD_COLLECTION
     
     def draw(self, screen, game):
-        screen.fill((100, 100, 100))
+        screen.fill(TABLE_GREEN)
 
         player = game.get_current_player()
 
-        title_text = self.font.render(f"Cards Left in Deck:  {len(player.deck.cards)} / 52", True, (0, 0, 0))
+        title_text = self.font.render(f"Cards Left in Deck:  {len(player.deck.cards)} / 52", True, TEXT_LIGHT)
         screen.blit(title_text, (235, 30))
 
         self.back_button.draw(screen)
