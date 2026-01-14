@@ -1,5 +1,6 @@
 from Board import Board
 from Player import Player
+from SpriteManager import SpriteManager
 
 class Game:
     def __init__(self):
@@ -8,8 +9,15 @@ class Game:
             "White": Player("White"),
             "Black": Player("Black")
         }
+
+        #Create sprite_manager BEFORE setup (loads your kings now!)
+        self.sprite_manager = SpriteManager("assets")
+        
+        # Pass 'self' as the third arg (gives access to game.sprite_manager)
+        self.board.setup_initial_game(self.players["White"], self.players["Black"], self)
+
         self.current_player_color = "White"
-        self.board.setup_initial_game(self.players["White"], self.players["Black"])
+        self.board.setup_initial_game(self.players["White"], self.players["Black"], self)
         self.winner = None
         
     def get_current_player(self):

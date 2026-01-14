@@ -88,18 +88,12 @@ class AttackScreen:
         if self.skip_button.is_clicked(event):
             self.start_exit()
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and not self.exiting:
+
             square = get_square_from_mouse(pygame.mouse.get_pos())
             if square:
                 self.handle_board_click(game, *square)
 
-        if game.is_game_over():
-            return Screen.GAME_OVER
-
-        if not game.get_current_player().can_attack():
-            self.start_exit()
-            
-        
         return Screen.ATTACK
 
     # -------------------- Board Click Logic --------------------
@@ -246,6 +240,13 @@ class AttackScreen:
     # -------------------- Updating --------------------
 
     def update(self, screen, game):
+         
+        if game.is_game_over():
+            return Screen.GAME_OVER
+
+        if not game.get_current_player().can_attack():
+            self.start_exit()
+
         if self.exiting:
             now = pygame.time.get_ticks()
             if now - self.exit_start_time >= self.EXIT_DELAY:

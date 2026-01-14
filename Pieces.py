@@ -31,7 +31,7 @@ PIECE_STATS = {
         "heal": 0,
         "attack": 1,
         "movement": 1,
-        "range": 2,  # +1 range
+        "range": 3,  # +2 range
         "movement_rule": "forward_only",
         "promotes_to": PieceType.QUEEN
     },
@@ -82,7 +82,7 @@ PIECE_STATS = {
 
     # Full House
     PieceType.DIREWOLF: {
-        "health": 5,
+        "health": 4,
         "heal": 0,
         "attack": 3,
         "movement": 3,
@@ -95,7 +95,7 @@ PIECE_STATS = {
     PieceType.JUGGERNAUT: {
         "health": 7,
         "heal": 0,
-        "attack": 4,
+        "attack": 3,
         "movement": 2,
         "range": 1,
         "movement_rule": "any",
@@ -108,7 +108,7 @@ PIECE_STATS = {
         "heal": 0,
         "attack": 3,
         "movement": 2,
-        "range": 2,  # Range+1
+        "range": 3,  # Range+2
         "movement_rule": "any",
         "promotes_to": None
     },
@@ -147,6 +147,8 @@ class Piece:
         self.row = None 
         self.col = None 
         self.bonus = "commonUnit"
+        self.image_obj = None
+        
         self.apply_stats()
 
     #applys all stats to the piece

@@ -31,10 +31,30 @@ def draw_pieces(screen, board_state, font, x0=0, y0=0):
             piece = board_state[r][c]
             if piece is None:
                 continue
-            
-            # TODO create custon black/white pieces
-            text = font.render(piece.piece_initial(), True, (0, 0, 0))
-            screen.blit(text, (x0 + c*TILE + 22, y0 + r*TILE + 15))
+
+
+            tile_rect = pygame.Rect(x0 + c * TILE, y0 + r * TILE, TILE, TILE)
+
+            # Get image safely (fallback to None if missing)
+            image_obj = getattr(piece, 'image_obj', None)
+
+
+            if image_obj is not None:
+                # FIXED: Clear tile with background color FIRST (erases any old text)
+                tile_color = (180, 180, 180) if (r + c) % 2 == 0 else (120, 120, 120)  # Match your draw_board colors
+                pygame.draw.rect(screen, tile_color, tile_rect)
+                
+                # Draw the image on top (covers everything)
+                image_obj.draw(screen, x0, y0)
+            else:
+                # TEXT FALLBACK: Only if no image (draw on clean tile)
+                # Re-draw tile background for consistency
+                tile_color = (180, 180, 180) if (r + c) % 2 == 0 else (120, 120, 120)
+                pygame.draw.rect(screen, tile_color, tile_rect)
+                
+                text = font.render(piece.piece_initial(), True, (0, 0, 0))
+                text_rect = text.get_rect(center=tile_rect.center)  # Center text better
+                screen.blit(text, text_rect)
 
 
 # draws the highlights as a border around the given tiles

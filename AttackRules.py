@@ -1,6 +1,5 @@
 from MovementRules import (
     ANY_ONE_DIRECTION_OFFSETS,
-    KNIGHT_OFFSETS,
     ORTHOGONAL_OFFSETS,
     DIAGONAL_OFFSETS
 )
@@ -143,9 +142,6 @@ def get_attack_targets(board, piece):
         targets = get_heal_targets(board, piece)  # allies
         targets += ray_attacks(board, piece, ORTHOGONAL_OFFSETS, piece.range)  # enemies
         return targets
-    # Add normal attacks
-    if piece.type == PieceType.KNIGHT:
-        targets += offset_attacks(board, piece, KNIGHT_OFFSETS)
 
     if piece.type == PieceType.CATAPULT:
         targets += catapult_attacks(board, piece)

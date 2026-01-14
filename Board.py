@@ -1,9 +1,15 @@
+from SpriteManager import SpriteManager
+
 class Board:
     def __init__(self, rows=8, cols=8):
         self.rows = rows
         self.cols = cols
         self.grid = [[None for _ in range(rows)] for _ in range(cols)]
         self.kings = {}
+
+        #images
+        self.sprite_manager = None
+       
 
     def in_bounds(self, pos):
         x, y = pos
@@ -32,12 +38,16 @@ class Board:
         piece.col = None
 
 
-    def setup_initial_game(self, white_player, black_player):
+    def setup_initial_game(self, white_player, black_player, game):
         from Pieces import Piece, PieceType
+        from PieceImage import PieceImage
     #place white king, 2 Warriors and 1 Archer
         K = Piece(PieceType.KING, "White")
         self.place_piece(K, (7, 4))
         self.kings["White"] = K  # Store reference
+        K.image_obj = PieceImage(K, game.sprite_manager)
+
+
 
         A = Piece(PieceType.ARCHER, "White")
         self.place_piece(A, (7, 3))
@@ -56,6 +66,7 @@ class Board:
         k = Piece(PieceType.KING, "Black")
         self.place_piece(k, (0, 3))
         self.kings["Black"] = k  # Store reference
+        k.image_obj = PieceImage(k, game.sprite_manager)  # NEW: Attach image (uses black_king.png)
 
         a = Piece(PieceType.ARCHER, "Black")
         self.place_piece(a, (0, 4))
