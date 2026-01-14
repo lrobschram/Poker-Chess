@@ -143,7 +143,7 @@ class PlacementScreen:
         player = game.get_current_player()
 
         if player.poker_hand != None:
-            piece = calc_piece(player.poker_hand, player)
+            piece = calc_piece(player.poker_hand, player, game)
             self.curr_piece = piece
             
             #calculate chips and add bonus 
