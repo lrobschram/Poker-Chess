@@ -86,7 +86,6 @@ def pretty_bonus(bonus: str) -> str:
 def draw_stats(screen, font, piece, x0):
     bonus_text = pretty_bonus(piece.bonus)
     lines = [
-        f"Piece Clicked: ",
         f"{piece.type.name}",
         f"{piece.owner}",
         f"{piece.attack} att",
@@ -95,15 +94,19 @@ def draw_stats(screen, font, piece, x0):
             ]
     
     y = 275
+    title_text = font.render(f"Piece Clicked: ", True, (170, 170, 170))
+    screen.blit(title_text, (x0 + 15, y))
+    y += 25
+    
     for line in lines:
-        text = font.render(line, True, (0, 0, 0))
+        text = font.render(line, True, (255, 255, 255))
         screen.blit(text, (x0 + 15, y))
         y += 25
     
     bar_width = 160
     bar_height = 14
 
-    bar_x = x0 + 15
+    bar_x = x0 + 5
     bar_y = y + 10  # just below text
 
     ratio = max(0, min(1, piece.health / piece.max_health))

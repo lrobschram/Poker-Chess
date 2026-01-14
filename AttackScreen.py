@@ -5,41 +5,84 @@ from AttackRules import get_attack_targets
 from Pieces import PieceType
 
 
+# ---- Attack UI colors  ----
+PANEL_RED   = (255, 220, 220)   # your current panel bg
+CARD_BG       = (55, 55, 55)
+TEXT_MAIN     = (235, 235, 230)
+TEXT_MUTED    = (170, 170, 170)
+ACCENT_RED   = (255, 0, 0)
+DIVIDER       = (90, 90, 90)
 
-# -------------------- Utility Functions --------------------
+def draw_kv(screen, font, x, y, label, value,
+            label_color=TEXT_MUTED, value_color=TEXT_MAIN,
+            line_gap=18):
+    label_surf = font.render(label, True, label_color)
+    value_surf = font.render(value, True, value_color)
+    screen.blit(label_surf, (x, y))
+    screen.blit(value_surf, (x, y + line_gap))
 
-def draw_panel(screen, font, game, x0, w, h, phase="Attack", attacks_left=0, exiting=False):
-    pygame.draw.rect(screen, (255, 220, 220), pygame.Rect(x0, 0, w, h))
+def draw_panel(screen, font, game, x0, w, h, phase="ATTACK", attacks_left=0, exiting=False, skip_button=None):
+    # panel background (mint green)
+    panel = pygame.Rect(x0, 0, w, h)
+    pygame.draw.rect(screen, PANEL_RED, panel)
+
+    # inner dark "card" container
+    pad = 14
+    card = pygame.Rect(panel.x + pad, panel.y + pad, panel.w - 2*pad, panel.h - 2*pad)
+    pygame.draw.rect(screen, CARD_BG, card, border_radius=14)
+    pygame.draw.rect(screen, (0, 0, 0), card, 2, border_radius=14)
+
+    # accent strip at top
+    accent = pygame.Rect(card.x, card.y, card.w, 5)
+    pygame.draw.rect(screen, ACCENT_RED, accent, border_radius=14)
+
     player = game.get_current_player()
-    y = 20
 
+    # --- layout metrics ---
+    left_x = card.x + 14
+    y = card.y + 18
+
+    # Title
+    title = font.render(phase, True, ACCENT_RED)
+    screen.blit(title, (left_x, y))
+    y += 28
+
+    # Divider
+    pygame.draw.line(screen, DIVIDER, (card.x + 10, y), (card.right - 10, y), 2)
+    y += 14
+
+    # Row 1
+    draw_kv(screen, font, left_x,  y, "PLAYER", player.color)
+    
+    y += 46
+
+    # Row 2
     if exiting:
-        # only change when exiting
         next_player = game.get_next_player()
-        
-        lines = [
-             f"Player: {player.color}",
-             f"Turn Ending...",
-             f"next player: {next_player.color}"
-    ]
-
-        for line in lines:
-            text = font.render(line, True, (0, 0, 0))
-            screen.blit(text, (x0 + 15, y))
-            y += 35
-        return
-    
-    lines = [
-        f"Phase: {phase}",
-        f"Player: {player.color}",
-        f"Attacks left: {attacks_left}"
-    ]
-
-    for line in lines:
-        text = font.render(line, True, (0, 0, 0))
-        screen.blit(text, (x0 + 15, y))
+        draw_kv(screen, font, left_x,  y, "Turn Ending...", " ")
         y += 35
-    
+        draw_kv(screen, font, left_x,  y, "NEXT PLAYER:", next_player.color)
+
+
+    else:
+        draw_kv(screen, font, left_x,  y, "ATTACKS LEFT", str(attacks_left))
+
+    # If you want, show something else on the right (optional)
+    # draw_kv(screen, font, right_x, y, "TURN", str(player.turn_num))
+    y += 46
+
+    # Optional button placed nicely near bottom inside the card
+    if skip_button is not None:
+        btn_margin = 14
+        btn_w = card.w - 2*btn_margin
+        btn_h = 44
+        btn_x = card.x + btn_margin
+        btn_y = card.bottom - btn_margin - btn_h
+
+        skip_button.rect.topleft = (btn_x, btn_y)
+        skip_button.rect.size = (btn_w, btn_h)
+        skip_button.radius = 12  # if your Button supports it
+        skip_button.draw(screen)
 
 # -------------------- AttackScreen Class --------------------
 
@@ -213,7 +256,7 @@ class AttackScreen:
         self.skip_button.draw(screen)
 
         if self.last_clicked != None:
-            draw_stats(screen, self.hud_font, self.last_clicked, panel_x)
+            draw_stats(screen, self.hud_font, self.last_clicked, panel_x + 14)
 
     # -------------------- Lifecycle --------------------
 
