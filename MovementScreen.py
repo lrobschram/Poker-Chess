@@ -119,9 +119,7 @@ class MovementScreen:
                         self.pos_moves = piece.get_raw_moves(game.board)
                         self.selected = True
                     else:
-                        self.error = True
-                        self.err_loc = (row, col)
-                        self.error_start_time = pygame.time.get_ticks()
+                        self.trigger_error((row, col))
                 else:
                     self.pos_moves = []
 
@@ -143,8 +141,11 @@ class MovementScreen:
 
                         self.pieces_moved.append(new_piece)
                         curr_player.use_move()
+                    else:
+                        self.trigger_error((row, col))
                 else:
                     self.last_clicked = game.board.get_piece((row, col))
+                    self.trigger_error((row, col))
 
                 self.selected = False
                 self.curr_piece = None
@@ -176,13 +177,7 @@ class MovementScreen:
 
         draw_highlights(screen, self.pos_moves, (255, 200, 0), board_x, board_y)
 
-        # Red overlay for pieces that already attacked
-        for piece in self.pieces_moved:
-            overlay = pygame.Surface((TILE, TILE), pygame.SRCALPHA)
-            overlay.fill((255, 0, 0, 100))  # semi-transparent red
-            inner_x = board_x + piece.col * TILE
-            inner_y = board_y + piece.row * TILE
-            screen.blit(overlay, (inner_x, inner_y))
+        
 
         draw_pieces(screen, game.board.grid, self.font, board_x, board_y)
         draw_panel(screen, self.hud_font, game, panel_x, panel_w, panel_h)
@@ -194,9 +189,21 @@ class MovementScreen:
         if self.error:
             draw_error(screen, self.err_loc, board_x, board_y)
 
+        # Red overlay for pieces that already attacked
+        for piece in self.pieces_moved:
+            overlay = pygame.Surface((TILE, TILE), pygame.SRCALPHA)
+            overlay.fill((255, 0, 0, 100))  # semi-transparent red
+            inner_x = board_x + piece.col * TILE
+            inner_y = board_y + piece.row * TILE
+            screen.blit(overlay, (inner_x, inner_y))
+
         if self.curr_piece != None:
             draw_borders(screen, self.curr_piece, (0, 100, 255), board_x, board_y)
                
+    def trigger_error(self, pos):
+        self.error = True
+        self.err_loc = pos
+        self.error_start_time = pygame.time.get_ticks()
 
     """
         Sets up the Movement phase on entering

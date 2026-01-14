@@ -6,8 +6,6 @@ from Pieces import Piece, PieceType
 from PieceImage import PieceImage
 
 
-
-
 HAND_TO_PIECE = {
     HandRank.HIGH_CARD:     PieceType.WARRIOR,
     HandRank.PAIR:      PieceType.ARCHER,

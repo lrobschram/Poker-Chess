@@ -167,17 +167,18 @@ class AttackScreen:
             return
 
         # Step 2: Select new attacker
-        if piece and piece.owner == current_player.color:
-            if piece in self.used_attackers:
-                self.trigger_error((row, col))  # cannot attack twice
-                return
-            self.selected_attacker = piece
-            self.valid_targets = get_attack_targets(board, piece)
-            self.last_clicked = piece
-        else:
-            # Not a friendly piece
-            self.last_clicked = piece
-            self.trigger_error((row, col))
+        if piece:
+            if piece.owner == current_player.color:
+                if piece in self.used_attackers:
+                    self.trigger_error((row, col))  # cannot attack twice
+                    return
+                self.selected_attacker = piece
+                self.valid_targets = get_attack_targets(board, piece)
+                self.last_clicked = piece
+            else:
+                # Not a friendly piece
+                self.last_clicked = piece
+                self.trigger_error((row, col))
 
     # -------------------- Resolve Attack --------------------
 
