@@ -3,6 +3,7 @@ from Screens import Screen
 from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights, draw_pieces, get_square_from_mouse, pretty_bonus
 from HandEvaluator import HandRank, add_bonus, chip_counter
 from Pieces import Piece, PieceType
+from PieceImage import PieceImage
 
 
 
@@ -19,10 +20,12 @@ HAND_TO_PIECE = {
     HandRank.STRAIGHT_FLUSH: PieceType.QUEEN,
 }
 
-def calc_piece(hand_rank, player):
+def calc_piece(hand_rank, player, game):
 
     piece_type = HAND_TO_PIECE.get(hand_rank)
-    return Piece(piece_type, player.color)
+    piece = Piece(piece_type, player.color)
+    piece.image_obj = PieceImage(piece, game.sprite_manager)
+    return piece
 
 def add_bonus_piece(piece, pieceBonus):
     if(pieceBonus == "noBonus"):
