@@ -41,11 +41,36 @@ def add_bonus_piece(piece, pieceBonus):
     piece.bonus = pieceBonus
     
 
+# ---- Placement UI colors ----
+PANEL_BLUE   = (220, 220, 255)   # your current panel bg
+CARD_BG       = (55, 55, 55)
+TEXT_MAIN     = (235, 235, 230)
+TEXT_MUTED    = (170, 170, 170)
+ACCENT_BLUE   = (0, 100, 255)
+DIVIDER       = (90, 90, 90)
 
+def draw_kv(screen, font, x, y, label, value,
+            label_color=TEXT_MUTED, value_color=TEXT_MAIN,
+            line_gap=18):
+    label_surf = font.render(label, True, label_color)
+    value_surf = font.render(value, True, value_color)
+    screen.blit(label_surf, (x, y))
+    screen.blit(value_surf, (x, y + line_gap))
 
 def draw_panel(screen, font, game, piece, x0, w, h):
-    # panel background
-    pygame.draw.rect(screen, (220, 220, 255), pygame.Rect(x0, 0, w, h))
+    # panel background (mint green)
+    panel = pygame.Rect(x0, 0, w, h)
+    pygame.draw.rect(screen, PANEL_BLUE, panel)
+
+    # inner dark "card" container
+    pad = 14
+    card = pygame.Rect(panel.x + pad, panel.y + pad, panel.w - 2*pad, panel.h - 2*pad)
+    pygame.draw.rect(screen, CARD_BG, card, border_radius=14)
+    pygame.draw.rect(screen, (0, 0, 0), card, 2, border_radius=14)
+
+    # accent strip at top
+    accent = pygame.Rect(card.x, card.y, card.w, 5)
+    pygame.draw.rect(screen, ACCENT_BLUE, accent, border_radius=14)
 
     player = game.get_current_player()
 
@@ -56,20 +81,62 @@ def draw_panel(screen, font, game, piece, x0, w, h):
         piece_text = "Skipped"
         bonus_text = None
 
-    lines = [
-        f"Phase: Placement",
-        f"Player: {player.color}",
-        f"Piece created: {piece_text}", 
-    ]
+    # --- layout metrics ---
+    left_x = card.x + 14
+    y = card.y + 18
+
+    # Title
+    title = font.render("PLACEMENT", True, ACCENT_BLUE)
+    screen.blit(title, (left_x, y))
+    y += 28
+
+    # Divider
+    pygame.draw.line(screen, DIVIDER, (card.x + 10, y), (card.right - 10, y), 2)
+    y += 14
+
+    # Row 1
+    draw_kv(screen, font, left_x,  y, "PLAYER", player.color)
+    
+    y += 43
+
+    # Row 2
+    draw_kv(screen, font, left_x,  y, "PIECE", piece_text)
+
+    # If you want, show something else on the right (optional)
+    # draw_kv(screen, font, right_x, y, "TURN", str(player.turn_num))
+    y += 43
 
     if bonus_text != None:
-        lines.append(bonus_text)
+        draw_kv(screen, font, left_x,  y, "BONUS", bonus_text)
 
-    y = 20
-    for line in lines:
-        text = font.render(line, True, (0, 0, 0))
-        screen.blit(text, (x0 + 15, y))
-        y += 35
+
+# def draw_panel(screen, font, game, piece, x0, w, h):
+#     # panel background
+#     pygame.draw.rect(screen, (220, 220, 255), pygame.Rect(x0, 0, w, h))
+
+#     player = game.get_current_player()
+
+#     if piece != None:
+#         piece_text = piece.type.name.replace("_", " ").title()
+#         bonus_text = f"{pretty_bonus(piece.bonus)}"
+#     else:
+#         piece_text = "Skipped"
+#         bonus_text = None
+
+#     lines = [
+#         f"Phase: Placement",
+#         f"Player: {player.color}",
+#         f"Piece created: {piece_text}", 
+#     ]
+
+#     if bonus_text != None:
+#         lines.append(bonus_text)
+
+#     y = 20
+#     for line in lines:
+#         text = font.render(line, True, (0, 0, 0))
+#         screen.blit(text, (x0 + 15, y))
+#         y += 35
 
 class PlacementScreen:
 

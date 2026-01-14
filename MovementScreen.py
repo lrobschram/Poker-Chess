@@ -19,7 +19,7 @@ def draw_kv(screen, font, x, y, label, value,
     screen.blit(label_surf, (x, y))
     screen.blit(value_surf, (x, y + line_gap))
 
-def draw_panel(screen, font, game, x0, w, h, skip_button=None):
+def draw_panel(screen, font, game, x0, w, h):
     # panel background (mint green)
     panel = pygame.Rect(x0, 0, w, h)
     pygame.draw.rect(screen, PANEL_GREEN, panel)
@@ -61,18 +61,6 @@ def draw_panel(screen, font, game, x0, w, h, skip_button=None):
     # draw_kv(screen, font, right_x, y, "TURN", str(player.turn_num))
     y += 46
 
-    # Optional button placed nicely near bottom inside the card
-    if skip_button is not None:
-        btn_margin = 14
-        btn_w = card.w - 2*btn_margin
-        btn_h = 44
-        btn_x = card.x + btn_margin
-        btn_y = card.bottom - btn_margin - btn_h - 300
-
-        skip_button.rect.topleft = (btn_x, btn_y)
-        skip_button.rect.size = (btn_w, btn_h)
-        skip_button.radius = 12  # if your Button supports it
-        skip_button.draw(screen)
 
 class MovementScreen:
 
@@ -196,14 +184,15 @@ class MovementScreen:
             inner_y = board_y + piece.row * TILE
             screen.blit(overlay, (inner_x, inner_y))
 
-        if self.error:
-            draw_error(screen, self.err_loc, board_x, board_y)
         draw_pieces(screen, game.board.grid, self.font, board_x, board_y)
         draw_panel(screen, self.hud_font, game, panel_x, panel_w, panel_h)
         self.skip_button.draw(screen)
 
         if self.last_clicked != None:
             draw_stats(screen, self.hud_font, self.last_clicked, panel_x + 14)
+
+        if self.error:
+            draw_error(screen, self.err_loc, board_x, board_y)
 
         if self.curr_piece != None:
             draw_borders(screen, self.curr_piece, (0, 100, 255), board_x, board_y)

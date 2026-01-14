@@ -21,7 +21,7 @@ def draw_kv(screen, font, x, y, label, value,
     screen.blit(label_surf, (x, y))
     screen.blit(value_surf, (x, y + line_gap))
 
-def draw_panel(screen, font, game, x0, w, h, phase="ATTACK", attacks_left=0, exiting=False, skip_button=None):
+def draw_panel(screen, font, game, x0, w, h, phase="ATTACK", attacks_left=0, exiting=False):
     # panel background (mint green)
     panel = pygame.Rect(x0, 0, w, h)
     pygame.draw.rect(screen, PANEL_RED, panel)
@@ -71,18 +71,6 @@ def draw_panel(screen, font, game, x0, w, h, phase="ATTACK", attacks_left=0, exi
     # draw_kv(screen, font, right_x, y, "TURN", str(player.turn_num))
     y += 46
 
-    # Optional button placed nicely near bottom inside the card
-    if skip_button is not None:
-        btn_margin = 14
-        btn_w = card.w - 2*btn_margin
-        btn_h = 44
-        btn_x = card.x + btn_margin
-        btn_y = card.bottom - btn_margin - btn_h
-
-        skip_button.rect.topleft = (btn_x, btn_y)
-        skip_button.rect.size = (btn_w, btn_h)
-        skip_button.radius = 12  # if your Button supports it
-        skip_button.draw(screen)
 
 # -------------------- AttackScreen Class --------------------
 
