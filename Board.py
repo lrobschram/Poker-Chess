@@ -41,39 +41,47 @@ class Board:
     def setup_initial_game(self, white_player, black_player, game):
         from Pieces import Piece, PieceType
         from PieceImage import PieceImage
-    #place white king, 2 Warriors and 1 Archer
+
+        # Place white king, 2 Warriors, and 1 Archer
         K = Piece(PieceType.KING, "White")
         self.place_piece(K, (7, 4))
         self.kings["White"] = K  # Store reference
-        K.image_obj = PieceImage(K, game.sprite_manager)
-
-
+        K.image_obj = PieceImage(K, game.sprite_manager)  # Attach sprite (uses white_king.png)
 
         A = Piece(PieceType.ARCHER, "White")
         self.place_piece(A, (7, 3))
+        A.image_obj = PieceImage(A, game.sprite_manager)  # Attach (fallback "?" until white_archer.png added)
+
         W1 = Piece(PieceType.WARRIOR, "White")
         self.place_piece(W1, (6, 3))
+        W1.image_obj = PieceImage(W1, game.sprite_manager)  # Attach (fallback)
+
         W2 = Piece(PieceType.WARRIOR, "White")
-        self.place_piece(W2, (6,4))
+        self.place_piece(W2, (6, 4))
+        W2.image_obj = PieceImage(W2, game.sprite_manager)  # Attach (fallback)
 
         white_player.my_pieces.append(K)
         white_player.my_pieces.append(A)
         white_player.my_pieces.append(W1)
         white_player.my_pieces.append(W2)
 
-    #place piece black king, 2 Warriors and Archer
-    
+        # Place black king, 2 Warriors, and 1 Archer
         k = Piece(PieceType.KING, "Black")
         self.place_piece(k, (0, 3))
         self.kings["Black"] = k  # Store reference
-        k.image_obj = PieceImage(k, game.sprite_manager)  # NEW: Attach image (uses black_king.png)
+        k.image_obj = PieceImage(k, game.sprite_manager)  # Attach (uses black_king.png)
 
         a = Piece(PieceType.ARCHER, "Black")
         self.place_piece(a, (0, 4))
+        a.image_obj = PieceImage(a, game.sprite_manager)  # Attach (fallback)
+
         w1 = Piece(PieceType.WARRIOR, "Black")
         self.place_piece(w1, (1, 3))
+        w1.image_obj = PieceImage(w1, game.sprite_manager)  # Attach (fallback)
+
         w2 = Piece(PieceType.WARRIOR, "Black")
         self.place_piece(w2, (1, 4))
+        w2.image_obj = PieceImage(w2, game.sprite_manager)  # Attach (fallback)
 
         black_player.my_pieces.append(k)
         black_player.my_pieces.append(a)
