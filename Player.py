@@ -4,8 +4,8 @@ from BonusStats import BonusStats
 
 class Player:
     MAX_MOVES = 4
-    MAX_ATTACKS = 3
-    MAX_DISCARDS = 1
+    MAX_ATTACKS = 4
+    MAX_DISCARDS = 2
 
     def __init__(self, color):
         self.color = color
