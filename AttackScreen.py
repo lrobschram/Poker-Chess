@@ -171,6 +171,7 @@ class AttackScreen:
             if piece.owner == current_player.color:
                 if piece in self.used_attackers:
                     self.trigger_error((row, col))  # cannot attack twice
+                    self.last_clicked = board.get_piece((row, col))
                     return
                 self.selected_attacker = piece
                 self.valid_targets = get_attack_targets(board, piece)
