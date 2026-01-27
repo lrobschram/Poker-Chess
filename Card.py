@@ -27,6 +27,12 @@ class Card:
         self.rank = rank
         self.suit = suit
 
+    def __eq__(self, other):
+        return isinstance(other, Card) and self.rank == other.rank and self.suit == other.suit
+
+    def __hash__(self):
+        return hash((self.rank, self.suit))
+
     def __str__(self):
         rank_str = {
             Rank.JACK: "J",

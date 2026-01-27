@@ -29,13 +29,9 @@ class Deck:
         for i, card in enumerate(self.cards):
             print(f"{i}: {card}")
     
-    def remove_card(self, card):
-        if card in self.cards:
-            self.cards.remove(card)
-        
-    def remove_cards(self, cards):
-        for card in cards:
-            self.remove_card(card)
+    def remove_cards(self, cards_to_remove):
+        remove_set = {(c.rank, c.suit) for c in cards_to_remove}
+        self.cards = [c for c in self.cards if (c.rank, c.suit) not in remove_set]
 
     def sort_by_suit(self):
         self.cards.sort(key=lambda card: (card.suit.value, card.rank.value), reverse=True)

@@ -1,6 +1,7 @@
 import pygame
 from Screens import Screen
 from ui import Button, ROWS, COLS, TILE, draw_board, draw_error, draw_highlights, draw_pieces, get_square_from_mouse, draw_stats, draw_borders
+from PieceImage import PieceImage
 
 
 # ---- Movement UI colors (keep your green) ----
@@ -136,8 +137,11 @@ class MovementScreen:
                         # promote piece if made it to the end of the board
                         if (curr_player.color == "White") and (row == 0):
                             new_piece.promote()
+                            new_piece.image_obj = PieceImage(new_piece, game.sprite_manager)
+
                         elif (curr_player.color == "Black") and (row == 7):
                             new_piece.promote()
+                            new_piece.image_obj = PieceImage(new_piece, game.sprite_manager)
 
                         self.pieces_moved.append(new_piece)
                         curr_player.use_move()

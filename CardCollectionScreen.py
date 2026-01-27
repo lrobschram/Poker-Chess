@@ -38,38 +38,43 @@ class CardCollectionScreen:
     def display_cards(self, game, screen):
         player = game.get_current_player()
 
-        player.deck.sort_by_suit()
+        if player.deck.remaining() != 0:
 
-        x_offset = 0
-        y_offset = 0
-        curr_suit = player.deck.cards[0].suit
-        suit_counter = 0
+            player.deck.sort_by_suit()
 
-        for card in player.deck.cards:
+            x_offset = 0
+            y_offset = 0
+            curr_suit = player.deck.cards[0].suit
+            suit_counter = 0
 
-            if card.suit != curr_suit:
+            for card in player.deck.cards:
 
-                if suit_counter != 13:
-                    text_color = get_color(curr_suit)
-                    suit_amt = self.hud_font.render(f"{suit_counter}{curr_suit.value} left", True, text_color)
-                    screen.blit(suit_amt, (15 + x_offset, 110 + y_offset))
+                if card.suit != curr_suit:
 
-                x_offset = 0
-                y_offset += 105
-                curr_suit = card.suit
-                suit_counter = 0
+                    if suit_counter != 13:
+                        text_color = get_color(curr_suit)
+                        suit_amt = self.hud_font.render(f"{suit_counter}{curr_suit.value} left", True, text_color)
+                        screen.blit(suit_amt, (15 + x_offset, 110 + y_offset))
 
-            ui_card = Card_ui((10 + x_offset, 90 + y_offset), self.card_size, card, self.hud_font)
+                    x_offset = 0
+                    y_offset += 105
+                    curr_suit = card.suit
+                    suit_counter = 0
 
-            ui_card.draw(screen)
+                ui_card = Card_ui((10 + x_offset, 90 + y_offset), self.card_size, card, self.hud_font)
 
-            x_offset += 55
-            suit_counter += 1
+                ui_card.draw(screen)
 
-        if suit_counter != 13:
-                    text_color = get_color(curr_suit)
-                    suit_amt = self.hud_font.render(f"{suit_counter}{curr_suit.value} left", True, text_color)
-                    screen.blit(suit_amt, (15 + x_offset, 110 + y_offset))
+                x_offset += 55
+                suit_counter += 1
+
+            if suit_counter != 13:
+                        text_color = get_color(curr_suit)
+                        suit_amt = self.hud_font.render(f"{suit_counter}{curr_suit.value} left", True, text_color)
+                        screen.blit(suit_amt, (15 + x_offset, 110 + y_offset))
+        else:
+             no_card_text = self.font.render(f"No cards left in deck, discard to reshuffle!", True, (255, 255, 255))
+             screen.blit(no_card_text, (75, 250))
 
 
     def handle_event(self, event, game):
